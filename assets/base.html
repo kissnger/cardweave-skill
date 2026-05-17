@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><style>
+/* =============================================================
+   设计母版 · 文字海报 CSS 样式库
+   通过 CSS 变量切换系列配色：
+     data-series="trend"  → 紫色系（默认）
+     data-series="tool"   → 绿色系
+     data-series="brief"  → 琥珀色系
+   ============================================================= */
+
+/* ——— CSS 变量（默认 = 紫色/趋势） ——— */
+:root {
+  --bg: #06061A;
+  --card-w: 540px;
+  --card-h: 960px;
+  --card-pt: 120px;
+  --card-pr: 60px;
+  --card-pb: 100px;
+  --card-pl: 60px;
+
+  --brand-primary: #A855F7;
+  --brand-primary-dim: #9A8BFF;
+  --brand-gradient-1: #D8B4FE;
+  --brand-gradient-2: #A855F7;
+  --brand-gradient-3: #7C3AED;
+  --brand-gradient: linear-gradient(135deg, var(--brand-gradient-1), var(--brand-gradient-2), var(--brand-gradient-3));
+
+  --text-white: #FFFFFF;
+  --text-secondary: #CFCFE8;
+  --text-muted: #8B8BA5;
+  --text-bgword: #7A7A9A;
+
+  --border-alpha: rgba(216, 180, 254, 0.06);
+  --fill-alpha: rgba(216, 180, 254, 0.03);
+  --fill-alpha2: rgba(216, 180, 254, 0.02);
+}
+
+/* ——— 系列重写 ——— */
+[data-series="tool"] {
+  --brand-primary: #34D399;
+  --brand-primary-dim: #6EE7B7;
+  --brand-gradient-1: #6EE7B7;
+  --brand-gradient-2: #34D399;
+  --brand-gradient-3: #059669;
+  --brand-gradient: linear-gradient(135deg, var(--brand-gradient-1), var(--brand-gradient-2), var(--brand-gradient-3));
+  --border-alpha: rgba(52, 211, 153, 0.12);
+  --fill-alpha: rgba(52, 211, 153, 0.05);
+  --fill-alpha2: rgba(52, 211, 153, 0.03);
+  --text-bgword: #6EE7B7;
+}
+
+[data-series="brief"] {
+  --brand-primary: #F59E0B;
+  --brand-primary-dim: #FCD34D;
+  --brand-gradient-1: #FCD34D;
+  --brand-gradient-2: #F59E0B;
+  --brand-gradient-3: #D97706;
+  --brand-gradient: linear-gradient(135deg, var(--brand-gradient-1), var(--brand-gradient-2), var(--brand-gradient-3));
+  --border-alpha: rgba(245, 158, 11, 0.12);
+  --fill-alpha: rgba(245, 158, 11, 0.05);
+  --fill-alpha2: rgba(245, 158, 11, 0.03);
+  --text-bgword: #FCD34D;
+}
+
+/* ——— 基础重置 ——— */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.card{
+  width:var(--card-w);height:var(--card-h);background:var(--bg);
+  display:flex;flex-direction:column;padding:var(--card-pt) var(--card-pr) var(--card-pb) var(--card-pl);
+  position:relative;font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC","Helvetica Neue",sans-serif;overflow:hidden
+}
+.card-inner{flex:1;display:flex;flex-direction:column;position:relative;z-index:2}
+
+/* ====== 背景巨字 ====== */
+.bg-text{
+  position:absolute;top:40px;right:-30px;
+  font-size:300px;font-weight:900;color:var(--text-bgword);opacity:0.04;
+  line-height:0.85;letter-spacing:-10px;pointer-events:none;user-select:none;
+  font-family:"Helvetica Neue","SF Pro Display",sans-serif
+}
+
+/* ====== 封面系统 ====== */
+.tag{font-size:14px;font-weight:500;color:var(--brand-primary-dim);letter-spacing:2px;margin-bottom:60px}
+.title{font-size:56px;font-weight:900;line-height:1.15;letter-spacing:-0.01em;color:var(--text-white)}
+.title .hl{background:var(--brand-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.title .big2{font-size:64px;font-weight:900;display:block;margin-top:8px}
+.divider{
+  width:80px;height:3px;border-radius:999px;margin:48px 0;
+  background:var(--brand-gradient)
+}
+.sub{font-size:20px;font-weight:400;color:var(--text-secondary);opacity:0.65;line-height:1.6}
+.footer{font-size:14px;font-weight:300;color:var(--text-muted);letter-spacing:1px;margin-top:auto;padding-top:60px}
+
+/* ====== 内页系统 ====== */
+.page-tag{font-size:12px;font-weight:500;color:var(--brand-primary-dim);letter-spacing:2px;margin-bottom:40px;text-align:center}
+.page-title{font-size:38px;font-weight:800;text-align:center;line-height:1.2;letter-spacing:-0.01em;margin-bottom:32px;color:var(--text-white)}
+.page-title .hl{background:var(--brand-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* 数据横向三卡片 */
+.data-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.data-row{display:flex;gap:20px;justify-content:center;align-items:stretch}
+.d-card{
+  flex:1;max-width:130px;text-align:center;
+  padding:18px 12px;
+  display:flex;flex-direction:column;justify-content:center;
+  background:var(--fill-alpha);border:1px solid var(--border-alpha);border-radius:6px
+}
+.d-num{font-size:38px;font-weight:900;background:var(--brand-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.d-t{font-size:13px;font-weight:600;color:var(--text-white);margin-bottom:3px}
+.d-d{font-size:11px;font-weight:400;color:var(--text-secondary);opacity:0.6;line-height:1.5}
+.data-foot{font-size:12px;color:var(--text-muted);text-align:center;margin-top:auto;padding-top:40px}
+
+/* 数据纵向列表 */
+.d-list{flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px}
+.d-item{display:flex;align-items:center;gap:24px;
+  background:var(--fill-alpha2);border:1px solid var(--border-alpha);border-radius:6px;
+  padding:20px 24px}
+.d-item .num{font-size:48px;font-weight:900;min-width:100px;
+  background:var(--brand-gradient);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;text-align:center}
+.d-item .info{flex:1}
+.d-item .info .t{font-size:16px;font-weight:600;color:var(--text-white);margin-bottom:2px}
+.d-item .info .d{font-size:13px;font-weight:400;color:var(--text-secondary);opacity:0.6;line-height:1.5}
+
+/* 正文列表 */
+.body-list{display:flex;flex-direction:column;gap:32px;flex:1;justify-content:center}
+.b-item{text-align:left}
+.b-l{font-size:14px;font-weight:700;color:var(--brand-gradient-1);margin-bottom:6px}
+.b-t{font-size:18px;font-weight:500;color:var(--text-white);opacity:0.9;line-height:1.6}
+.closing{font-size:20px;font-weight:700;
+  background:var(--brand-gradient);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;margin-top:auto;padding-top:40px}
+
+/* 痛点 */
+.pain-list{display:flex;flex-direction:column;gap:24px;flex:1;justify-content:center}
+.p-item{text-align:left}
+.p-p{font-size:18px;font-weight:600;color:var(--text-white);line-height:1.5;margin-bottom:4px}
+.p-p .hl{color:var(--brand-gradient-1);font-weight:700}
+.p-s{font-size:14px;font-weight:400;color:var(--text-secondary);opacity:0.65;line-height:1.5}
+
+/* 痛点纯文字版（无边框，大字版） */
+.t-list{flex:1;display:flex;flex-direction:column;justify-content:center;gap:44px}
+.t-item{text-align:left}
+.t-item .prob{font-size:22px;font-weight:700;color:var(--text-white);margin-bottom:8px;line-height:1.3}
+.t-item .prob .hl{color:var(--brand-gradient-1);font-weight:700}
+.t-item .sol{font-size:16px;font-weight:400;color:var(--text-secondary);opacity:0.75;line-height:1.6}
+
+/* 上手步骤 */
+.steps{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.step-c{
+  background:var(--fill-alpha);border:1px solid var(--border-alpha);
+  border-radius:6px;padding:16px 20px;max-width:400px
+}
+.step-c .t{font-size:13px;color:var(--text-secondary);font-family:Menlo,monospace;line-height:1.8}
+.step-c .t .hl{color:var(--brand-gradient-1)}
+
+/* 简讯详情 */
+.news-list{display:flex;flex-direction:column;gap:24px;flex:1;justify-content:center}
+.n-item{text-align:left}
+.n-t{font-size:18px;font-weight:600;color:var(--text-white);line-height:1.5;margin-bottom:4px}
+.n-d{font-size:14px;font-weight:400;color:var(--text-secondary);opacity:0.65;line-height:1.6}
+
+/* 简讯封面 */
+.preview-list{display:flex;flex-direction:column;gap:16px;flex:0.5;justify-content:center;margin-top:12px}
+.pv-item{text-align:left}
+.pv-t{font-size:17px;font-weight:500;color:var(--text-white);opacity:0.9;line-height:1.5}
+/* 三段进度指示 */
+</body></html>

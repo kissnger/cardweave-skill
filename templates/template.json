@@ -1,0 +1,126 @@
+{
+  "_meta": {
+    "schema": "card-series/v1",
+    "date": "2026-05-17",
+    "description": "每日卡片海报数据源"
+  },
+  "trend": {
+    "name": "商业趋势",
+    "name_en": "Business Trend",
+    "brand": {
+      "primary": "#A855F7",
+      "gradient": ["#D8B4FE", "#A855F7", "#7C3AED"],
+      "bg_word": "SHIFT"
+    },
+    "cover": {
+      "tag": "基础设施 · 云格局重塑",
+      "title": {
+        "pre": "OpenAI 脱离",
+        "big2": "微软独占",
+        "highlight": "$10B亚马逊入局"
+      },
+      "subtitle": "OpenAI重组与微软的排他合作，亚马逊据传拟投100亿美元并用自研芯片托管模型\nMeta签下数十亿美元谷歌芯片租约，单一巨头已无法满足AI算力需求",
+      "footer": "2026年5月 · 趋势观察"
+    },
+    "p2": {
+      "tag": "格局数据",
+      "title": "算力黑洞 <span class=\"hl\">重塑联盟</span>",
+      "type": "data-list",
+      "items": [
+        { "num": "$10B", "title": "亚马逊计划投资OpenAI", "desc": "AWS拟用自研Trainium芯片托管OpenAI模型，结束微软云独家地位" },
+        { "num": "$125B+", "title": "Meta上调AI资本开支", "desc": "2026年AI capex加至1250-1450亿美元，同时签下数十亿谷歌芯片租约" },
+        { "num": "60%", "title": "Airbnb新代码由AI编写", "desc": "AI自动编写超半数生产代码，Anthropic同时推出Claude Code增强版" }
+      ],
+      "source": "devFlokers · airstreet.com/state-of-ai · 各公司公告"
+    },
+    "p3": {
+      "tag": "行业判断",
+      "title": "算力 <span class=\"hl\">去中心化</span>",
+      "type": "body-list",
+      "items": [
+        { "label": "趋势判断", "text": "从单一云厂商排他到多芯片多平台并行，AI算力供应链正在经历一场结构性的去中心化。这不是短期的价格战，而是基础设施层面的范式切换。" },
+        { "label": "行动指引", "text": "如果你的业务重度依赖单一云商的AI服务，现在是评估多云策略的最佳窗口。自研芯片+模型双绑定将成为下一个竞争壁垒。" }
+      ],
+      "closing": "AI基础设施的战争，已经从芯片打到了云。"
+    }
+  },
+  "tool": {
+    "name": "工具教程",
+    "name_en": "Tool Tutorial",
+    "brand": {
+      "primary": "#34D399",
+      "gradient": ["#6EE7B7", "#34D399", "#059669"],
+      "bg_word": "TOOL"
+    },
+    "cover": {
+      "tag": "今日趋势 · AI编程进化",
+      "title": {
+        "pre": "从Vibe Coding",
+        "big2": "到Agentic",
+        "highlight": "Engineering"
+      },
+      "subtitle": "Karpathy正式更名：AI辅助编程进入结构化新阶段\nAirbnb 60%新代码由AI生成 · Claude Code全面升级",
+      "footer": "2026年5月 · 效率实践"
+    },
+    "p2": {
+      "tag": "新旧对比",
+      "title": "<span class=\"hl\">Vibe → Agentic</span> 不只是改名",
+      "type": "pain-list",
+      "items": [
+        { "problem": "Vibe Coding = 让AI自由发挥", "solution": "Karpathy原意是「跟着感觉走」让AI写代码。问题在于缺乏结构性，代码质量不稳定，难以审计。" },
+        { "problem": "Agentic Engineering = <span class=\"hl\">结构化</span>开发", "solution": "强化AI代理在开发流程中的角色定义：代码审查、测试生成、多Agent协作。由AI辅助变成AI协作。" },
+        { "problem": "Claude Code + SpaceX <span class=\"hl\">合作</span>", "solution": "Anthropic与SpaceX达成协议后大幅提升Claude Code调用上限，新增记忆强化、多智能体编排、结果追踪功能。" }
+      ]
+    },
+    "p3": {
+      "tag": "快速上手",
+      "title": "<span class=\"hl\">新范式</span>三步",
+      "type": "steps",
+      "items": [
+        { "code": "claude code --agentic --plan \"refactor auth module\"" },
+        { "code": "claude code --review --test-coverage" },
+        { "code": "claude code --multi-agent --task-list backlog.md" }
+      ],
+      "footer": "Anthropic Claude Code · Airbnb 实践 · Karpathy 命名"
+    }
+  },
+  "brief": {
+    "name": "每日简讯",
+    "name_en": "Daily Brief",
+    "brand": {
+      "primary": "#F59E0B",
+      "gradient": ["#FCD34D", "#F59E0B", "#D97706"],
+      "bg_word": "BRIEF"
+    },
+    "cover": {
+      "tag": "AI & Agent 简讯 · 2026.05.17",
+      "title": {
+        "pre": "本周",
+        "big2": "值得关注的",
+        "highlight": "三件事"
+      },
+      "subtitle": "David Silver获11亿美元种子轮 · Broadcom+Meta定制芯片协议\n企业对AI支出失控：算力成本已超过人力",
+      "footer": "3分钟了解今天 · 每日简讯"
+    },
+    "p2": {
+      "tag": "本周要闻",
+      "title": "<span class=\"hl\">三条动态</span> 值得关注",
+      "type": "news-list",
+      "items": [
+        { "title": "David Silver 获 $1.1B 种子轮", "desc": "DeepMind联合创始人David Silver创立Ineffable Intelligence，以51亿美元估值完成欧洲史上最大种子轮。目标是纯自我对弈实现超级智能，不使用任何人类生成数据。" },
+        { "title": "Broadcom + Meta 定制AI芯片", "desc": "Broadcom与Meta达成定制AI芯片合作，为Meta数据中心开发专用硅。此举给Intel的AI代工业务施加新压力，同时延续超大规模厂商自研芯片趋势。" },
+        { "title": "AI算力成本超过人力成本", "desc": "多家企业报告AI推理和训练预算已超过同等任务的人力成本。企业对AI支出的审视加剧，要求从「先跑起来」转向「ROI可量化」的阶段。" }
+      ]
+    },
+    "p3": {
+      "tag": "行业观察",
+      "title": "<span class=\"hl\">我的看法</span>",
+      "type": "body-list",
+      "items": [
+        { "label": "资本信号", "text": "David Silver的11亿美元种子轮是个极端案例，但它传达了一个清晰信息：最聪明的大脑正在从大公司出走，用资本市场的钱挑战前沿。超级智能赛道不再是巨头的专利。" },
+        { "label": "成本拐点", "text": "AI算力超过人力成本这个信号被严重低估。这意味着下一阶段竞争将从「谁能用AI」转向「谁能高效用AI」。推理优化和模型蒸馏的公司将迎来黄金期。" }
+      ],
+      "closing": "2026年，AI的成本曲线正在从指数下降变为线性下降——早期红利正在消失。"
+    }
+  }
+}
