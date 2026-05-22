@@ -1,16 +1,30 @@
-# Cardweave — Daily Card Poster Generator
+# Cardweave — 每日卡片海报生成器
 
-Generate 9 styled card posters (3 series × 3 pages) from structured JSON data. Supports HTML output and PNG screenshots via Playwright.
+一键生成 9 张社交媒体卡片海报，三类内容 × 三页。
 
-## Quick Start
+## 快速使用
 
 ```bash
-cd cardweave-skill/
-python3 scripts/generate.py templates/template.json
+python3 scripts/generate.py          # 用默认模板生成 HTML
+python3 scripts/generate.py --screenshot   # 生成 HTML + PNG 截图
 ```
 
-Open `{date}/trend/cover.html` in your browser.
+打开 `{日期}/trend/cover.html` 查看效果。
 
-## Full Docs
+## 一次性的
 
-See [SKILL.md](SKILL.md) for detailed usage, color system, field rules, and layout specs.
+```bash
+pip3 install --break-system-packages playwright
+playwright install chromium
+```
+
+## 项目结构
+
+```
+assets/base.html        # 设计母版（CSS）
+scripts/generate.py     # 生成脚本
+templates/template.json # 数据源模板
+references/             # 字段参考文档
+```
+
+详见 [SKILL.md](SKILL.md) 完整文档。

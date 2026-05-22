@@ -8,104 +8,132 @@ description: >-
   convert structured JSON data into styled standalone HTML or PNG cards.
 ---
 
-# Cardweave — Daily Card Poster Generator
+# Cardweave — 每日卡片海报生成器
 
-Generate 9 styled HTML card posters (3 series × 3 pages) from structured JSON data. Each series has its own color scheme, layout templates, and optional PNG screenshot output via Playwright.
+Generate 9 styled HTML card posters (3 series × 3 pages) from structured JSON data. Each series has its own color scheme and layout templates. Optional PNG export via Playwright.
 
-## Directory Structure
+## 快速入门
+
+```bash
+git clone https://github.com/kissnger/cardweave-skill
+cd cardweave-skill/
+
+# 编辑数据 → 生成 HTML
+vim templates/template.json
+python3 scripts/generate.py
+
+# 打开查看
+open {日期}/trend/cover.html
+```
+
+## 目录结构
 
 ```
 cardweave-skill/
-├── SKILL.md                     # This file — skill definition
-├── assets/
-│   └── base.html                # Design master (CSS variables, do NOT edit)
-├── scripts/
-│   └── generate.py              # Generator script (run from repo root)
-├── templates/
-│   └── template.json            # Data source template (edit this daily)
-├── references/                  # Optional: layout specs, color system docs
+├── SKILL.md                         # 技能定义（此文件）
 ├── README.md
-└── .gitignore
+├── .gitignore
+├── assets/
+│   └── base.html                    # 设计母版（CSS 变量体系，非必要不改）
+├── scripts/
+│   └── generate.py                  # 生成脚本
+├── templates/
+│   └── template.json                # 数据源模板（每天改这个）
+├── references/
+│   └── data-schema.md               # JSON 字段参考
+└── {日期}/                           # 生成输出（已 gitignore）
+    ├── trend/  cover.html · p2.html · p3.html
+    ├── tool/   cover.html · p2.html · p3.html
+    ├── brief/  cover.html · p2.html · p3.html
+    └── screenshots/                 # PNG（--screenshot 时生成）
 ```
 
-Generated output goes to `{date}/`:
-```
-{date}/
-├── trend/  cover.html · p2.html · p3.html
-├── tool/   cover.html · p2.html · p3.html
-├── brief/  cover.html · p2.html · p3.html
-└── screenshots/   (when --screenshot flag)
-```
+## 工作流程
 
-## How to Use
+### 1. 找内容
 
-### 1. Edit data source
+每次必须搜索当天的真实新闻，不要复用旧数据。
 
-Edit `templates/template.json` — replace string values, keep the JSON structure intact.
+- **trend / 商业趋势**：一个大的行业转折 / 事件
+- **tool / 工具教程**：HN 热榜、GitHub 新星、Show HN 高赞项目
+- **brief / 每日简讯**：3 条 AI/Agent 领域热点
 
-**Critical field rules:**
+提取关键数字（百分比、金额、用时）用于 P2 数据卡片。
 
-| Field | Valid values | Required sub-fields |
-|-------|-------------|---------------------|
-| `p2.type` | `data-list`, `pain-list`, `news-list` | `data-list`: items need `num/title/desc`. `pain-list`: items need `problem/solution`. `news-list`: items need `title/desc` |
-| `p3.type` | `body-list`, `steps` | `body-list`: items need `label/text` + `closing` string. `steps`: items need `code` + `footer` string |
-| `cover.title` | any text | `pre` (first line), `big2` (large-font line, displayed as block), `highlight` (gradient highlight text) |
-| `brand` block | do NOT modify | Pre-configured colors per series |
+### 2. 填数据源
 
-### 2. Generate HTML
+编辑 `templates/template.json`，替换字符串值，保持结构不变。
+
+**关键字段规则：**
+
+| 字段 | 可选值 | 注意 |
+|------|--------|------|
+| `p2.type` | `data-list` / `pain-list` / `news-list` | 影响 P2 布局模板 |
+| `p3.type` | `body-list` / `steps` | 影响 P3 布局模板 |
+| `cover.title` | — | 必须包含 `pre` + `big2` + `highlight` |
+| `brand` | — | 不要改，已按系列预设配色 |
+
+详细字段参考见 `references/data-schema.md`。
+
+### 3. 生成
 
 ```bash
-cd cardweave-skill/
-python3 scripts/generate.py templates/template.json
+# 只生成 HTML
+python3 scripts/generate.py
+
+# 生成 HTML + 截图（需 Playwright）
+python3 scripts/generate.py --screenshot
 ```
 
-Output: 9 HTML files in the date directory.
+输出目录以日期命名（`_meta.date` 或当天日期）。
 
-### 3. Generate PNGs (optional — requires Playwright)
+### 4. 截图环境准备（一次性）
 
 ```bash
-# One-time setup
 pip3 install --break-system-packages playwright
 playwright install chromium
-
-# Generate with screenshots
-python3 scripts/generate.py templates/template.json --screenshot
 ```
 
-Output: 9 PNG files at 1080×1920px in `{date}/screenshots/`.
+## 配色系统
 
-Naming format: `01_P1_商业趋势_{date}_{timestamp}.png` through `03_P3_简讯观察_{date}_{timestamp}.png`.
+| 系列 | data-series | 主色 | 渐变 |
+|------|-------------|------|------|
+| 商业趋势 | trend | #A855F7 (紫) | D8B4FE → A855F7 → 7C3AED |
+| 工具教程 | tool | #34D399 (绿) | 6EE7B7 → 34D399 → 059669 |
+| 每日简讯 | brief | #F59E0B (琥珀) | FCD34D → F59E0B → D97706 |
 
-## Color System
+## 页面布局
 
-Three series switch automatically via the `data-series` attribute on the `<html>` tag — no manual CSS changes needed.
+| 页面 | 布局 | 关键元素 |
+|------|------|---------|
+| 封面 | tag → 标题(3段) → 分割线 → 副标题 → footer | bg-text 巨字背景 |
 
-| Series | data-series | Primary | Gradient |
-|--------|-------------|---------|----------|
-| Business Trend | trend | #A855F7 (purple) | D8B4FE → A855F7 → 7C3AED |
-| Tool Tutorial | tool | #34D399 (green) | 6EE7B7 → 34D399 → 059669 |
-| Daily Brief | brief | #F59E0B (amber) | FCD34D → F59E0B → D97706 |
+| P2 data-list (trend) | 纵向数据卡片 | 左渐变边框 + 大号数字 + 来源脚注 |
+| P2 pain-list (tool) | 大字纯文字 | ◆ 标记 + 缩进解决方案 |
+| P2 news-list (brief) | ①②③ 编号 | 粗体标题 + 半透明描述 |
 
-## Page Layout Specifications
+| P3 body-list | 标签+正文 | 渐变金句 + 分割线 |
+| P3 steps (tool) | 编号代码块 | 01/02/03 + 等宽字体 |
 
-- **Cover**: tag → 3-part title (pre/big2/highlight) → gradient divider line → subtitle → footer. Background decoration word (bg-text) at 0.04 opacity serves as visual anchor.
-- **P2 — Data (trend)**: Vertical data cards with left brand-gradient accent border (border-image). Source credit with gradient separator line at bottom.
-- **P2 — Pain (tool)**: Large text, no card borders. ◆ marker before each problem statement. Solution text indented with left reference line for visual separation.
-- **P2 — News (brief)**: ①②③ numbered circle badges. Bold white title with reduced-opacity description paragraph.
-- **P3 — Conclusion (trend/brief)**: Body list with label + text → gradient separator line → closing quote (designed as the most shareable element for social screenshots).
-- **P3 — Steps (tool)**: Numbered code blocks (01/02/03) with monospace font and shell prompt prefix. Footer with project attribution.
+## 设计原则
 
-## Common Pitfalls
+- **深色底** #06061A，白字，渐变强调
+- **无进度指示器** — 每页自成一体的独立卡片，不加导航元素
+- **bg-text** 300px 背底巨字提升视觉深度
+- **卡片尺寸** 540×960px (9:16)，2x 截图 = 1080×1920
+- **P3 closing** 是最有传播力的元素 — 渐变文字 + 分割线强化
 
-1. **Wrong `type` field value** — mismatched type breaks layout. Ensure item fields match the type you selected.
-2. **Missing `cover.title` sub-fields** — `pre`, `big2`, and `highlight` are all required. Missing one causes a blank title area.
-3. **Playwright screenshot error** — Chromium must be installed via `playwright install chromium`. The Python package alone is not enough.
-4. **Wrong working directory** — Always run from the repo root (`cardweave-skill/`). The script uses relative paths (`assets/base.html`, `templates/`).
-5. **Invalid `data-series` value** — Only `trend`, `tool`, or `brief` are accepted. Any other value produces unstyled or blank pages.
+## 常见问题
 
-## Verification Checklist
+1. **工作目录不对** — 必须从 repo 根目录 (`cardweave-skill/`) 运行
+2. **p2.type 与 items 结构不匹配** — data-list 需要 num/title/desc；pain-list 需要 problem/solution；news-list 需要 title/desc
+3. **cover.title 缺字段** — pre/big2/highlight 三个都要
+4. **截图全黑** — 先检查 HTML 在浏览器中能否正常渲染，再确认 playwright chromiunm 已安装
+5. **不要反复 patch CSS** — 每次重新生成完整的 9 页 HTML，不要增量改
 
-- [ ] All 9 HTML files generated in the `{date}/` directory
-- [ ] Opening any `cover.html` in a browser shows a styled card with correct color scheme and content
-- [ ] Data source has correct `type` values matching the item structures
-- [ ] (Optional) All 9 PNG files present in `screenshots/` directory
+## 验证清单
+
+- [ ] 9 页 HTML 全部生成在日期目录下
+- [ ] cover.html 在浏览器打开正常渲染
+- [ ] 三类配色正确（紫/绿/琥珀）
+- [ ] 截图 PNG 文件大小 > 60KB（渲染正常）

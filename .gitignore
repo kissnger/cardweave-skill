@@ -1,4 +1,5 @@
-# Generated output
-2026-05-17/
-screenshots/
+# Generated output (date directories)
+[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
 *.png
+__pycache__/
+.DS_Store
