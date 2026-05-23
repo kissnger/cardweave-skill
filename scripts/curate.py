@@ -389,6 +389,34 @@ def mark_used(db, ids):
             e["used"] = True
 
 
+def pick_series(series_name, rules, db, date_str):
+    """为一个系列选选题，返回 DB 原始格式的条目列表"""
+    r = rules["curation"][series_name]
+    src_ids = r["sources"]
+    select_new = r.get("select", {}).get("isNew", True)
+
+    # 从扁平 db 中筛候选
+    all_candidates = []
+    for src_id in src_ids:
+        all_candidates.extend(get_entries(db, date_str=date_str, category=src_id))
+    # 跨源去重
+    seen = {}
+    for c in all_candidates:
+        sid = c["story_id"]
+        if sid not in seen or c.get("points", 0) > seen[sid].get("points", 0):
+            seen[sid] = c
+    all_candidates = list(seen.values())
+    sort_by = r.get("cover", {}).get("select", {}).get("sort_by", "points")
+    all_candidates.sort(key=lambda x: (x.get("isNew", False), x.get("points", 0)), reverse=True)
+
+    # 按 cover 规则取候选
+    select_r = r.get("cover", {}).get("select", {})
+    max_n = select_r.get("max_candidates", 3)
+    min_pts = select_r.get("min_points", 0)
+    picked = [c for c in all_candidates if c.get("points", 0) >= min_pts and not c.get("used", False)][:max_n]
+    return picked
+
+
 def main():
     args = sys.argv[1:]
     review_only = False
@@ -400,7 +428,6 @@ def main():
     rules = load_rules()
     db = load_db()
 
-    # 日期来源：template.json（由 setup.py 写入），不再接收 --date 参数
     date_str = today
     if TEMPLATE_FILE.exists():
         try:
@@ -411,188 +438,79 @@ def main():
         except (json.JSONDecodeError, KeyError):
             pass
 
-    # 检查当天数据是否足够：少于 5 条或最高分低于 50 则自动退
+    # 检查数据是否足够，不够则 fallback
     day_entries = get_entries(db, date_str=date_str)
     max_pts = max((e.get("points", 0) for e in day_entries), default=0)
     needs_fallback = len(day_entries) < 5 or max_pts < 50
-
     if needs_fallback:
         dates = sorted({e["created_at"][:10] for e in db.get("entries", [])}, reverse=True)
         dates = [d for d in dates if d != date_str][:10]
         if not dates and not day_entries:
-            print(f"[错误] 数据库中没有任何数据", file=sys.stderr)
-            print(f"  先跑: python3 scripts/search_all.py", file=sys.stderr)
+            print("[错误] 数据库中没有任何数据", file=sys.stderr)
+            print("  先跑: python3 scripts/search_all.py", file=sys.stderr)
             sys.exit(1)
-        # 从最近日期找有足够数据的
         for fallback in dates:
-            fb_entries = get_entries(db, date_str=fallback)
-            fb_max = max((e.get("points", 0) for e in fb_entries), default=0)
-            if len(fb_entries) >= 5 and fb_max >= 50:
+            fb = get_entries(db, date_str=fallback)
+            fb_max = max((e.get("points", 0) for e in fb), default=0)
+            if len(fb) >= 5 and fb_max >= 50:
                 print(f"  [提示] {date_str} 数据不足({len(day_entries)}条,最高{max_pts}分)，使用 {fallback} 的数据")
                 date_str = fallback
-                day_entries = fb_entries
                 break
-        else:
-            # 所有日期都不满足阈值，退到最近日期
-            if dates:
-                fallback = dates[0]
-                print(f"  [提示] {date_str} 数据不足，使用 {fallback} 的数据（所有日期均低于阈值）")
-                date_str = fallback
-                day_entries = get_entries(db, date_str=date_str)
+
+    # 为各系列选题
+    picked_ids = []
+    read_ids = []
+    output = {"date": date_str}
+    for series_name in ["brief", "trend", "tool"]:
+        items = pick_series(series_name, rules, db, date_str)
+        output[series_name] = items
+        for item in items:
+            sid = item["story_id"]
+            if series_name == "brief":
+                read_ids.append(sid)
+            else:
+                picked_ids.append(sid)
 
     print(f"\n{'='*50}")
-    print(f"  Cardweave 内容出库 — {date_str}  |  库中共 {len(db['entries'])} 条, 当天 {len(day_entries)} 条")
+    print(f"  Cardweave 选题 — {date_str}  |  库中共 {len(db['entries'])} 条")
+    for s in ["brief", "trend", "tool"]:
+        items = output[s]
+        pts = ", ".join(f"↑{i['points']}" for i in items[:5])
+        print(f"    {s}: {len(items)} 条 ({pts})")
     print(f"{'='*50}\n")
 
-    output = {
-        "_meta": {
-            "schema": "card-series/v1",
-            "date": date_str,
-            "description": "每日卡片海报数据源",
-        }
-    }
-    # 如果 template.json 已存在，_meta.date 沿用已有的（流程开始时设定的当天日期）
-    if TEMPLATE_FILE.exists():
-        try:
-            existing = json.load(open(TEMPLATE_FILE))
-            if existing.get("_meta", {}).get("date"):
-                output["_meta"]["date"] = existing["_meta"]["date"]
-        except (json.JSONDecodeError, KeyError):
-            pass
-
-    all_selected_ids = []
-    all_read_ids = []  # brief 只读不占用
-
-    for series_name in ["brief", "trend", "tool"]:
-        output[series_name] = build_series(series_name, rules, db, date_str)
-        for section in ["p2", "p3"]:
-            ids = output[series_name].get(section, {}).get("_selected_ids", [])
-            if series_name == "brief":
-                all_read_ids.extend(ids)
-            else:
-                all_selected_ids.extend(ids)
-
     if review_only:
-        for s in ["trend", "tool", "brief"]:
-            print_review(s, output[s])
-        print()
+        for s in ["brief", "trend", "tool"]:
+            print(f"── {s} ──")
+            for i in output[s]:
+                print(f"  ↑{i['points']:4d}  {i['title'][:60]}")
         return
 
-    save_template(output)
+    # 写出选题 json
+    out_dir = ROOT / date_str
+    out_dir.mkdir(parents=True, exist_ok=True)
+    topic_file = out_dir / "选题.json"
+    with open(topic_file, "w", encoding="utf-8") as f:
+        json.dump(output, f, ensure_ascii=False, indent=2)
+    print(f"  📄 {topic_file.relative_to(ROOT)}")
 
-    # ── 抓取 URL 内容 → 翻译 → 存 md ──
-    md_dir = ROOT / date_str
-    md_dir.mkdir(parents=True, exist_ok=True)
-
-    # 机械翻译表
-    TRANSLATIONS = {
-        "AI has a multiplying effect on existing technical skills": "AI 对现有技术技能具有倍增效应",
-        "The current AI pricing was always going to go away": "当前 AI 定价模式终将消失",
-        "Steve Wozniak cheered after telling students they have AI": "沃兹尼亚克：学生们有了真正的 AI，值得欢呼",
-        "Agent.email": "Agent.email",
-        "Spec-Driven Development": "规范驱动开发",
-        "Prisma Next": "Prisma Next",
-        "CipherStash Stack": "CipherStash Stack",
-        "Dari-docs": "Dari-docs",
-        "OpenAI Agents SDK": "OpenAI Agents SDK",
-        "Runtime": "Runtime",
-        "Superset": "Superset",
-    }
-    def simple_translate(text):
-        for en, zh in TRANSLATIONS.items():
-            text = text.replace(en, zh)
-        return text
-
-    fetched = 0
-    for series_name in ["brief", "trend", "tool"]:
-        s = output.get(series_name, {})
-        seen_urls = set()
-        item_num = 0
-
-        # 收集所有 URL：cover candidates + p2 items._url
-        urls = []
-        for c in s.get("cover", {}).get("_candidates", []):
-            if c.get("url"):
-                urls.append(("cover", c.get("title", ""), c["url"]))
-        for item in s.get("p2", {}).get("items", []):
-            if item.get("_url"):
-                title = item.get("title") or item.get("problem", "")
-                urls.append(("p2", title, item["_url"]))
-        for item in s.get("p3", {}).get("items", []):
-            if item.get("_url"):
-                urls.append(("p3", item.get("label", ""), item["_url"]))
-
-        for section, title, url in urls:
-            if url in seen_urls:
-                continue
-            seen_urls.add(url)
-            item_num += 1
-            md_path = md_dir / f"{series_name}_{item_num:02d}.md"
-
-            if md_path.exists():
-                continue
-
-            text = fetch_page_text(url)
-            md_content = f"""# {simple_translate(title)}
-
-> 来源: {url}
-> 抓取时间: {datetime.now().strftime('%Y-%m-%d %H:%M')}
-
-## 原文摘要
-
-{text if text else '(无法获取正文内容)'}
-
----
-
-*此文件由 curate.py 自动生成，用于辅助填写 template.json*
-"""
-            md_path.write_text(md_content, encoding="utf-8")
-            fetched += 1
-            print(f"  📄 {md_path.relative_to(ROOT)}")
-
-    if fetched:
-        print(f"  ✓ {fetched} 个 URL 内容已抓取→md")
-
-    # 标记自动填充条目
-    if all_selected_ids:
-        mark_used(db, set(all_selected_ids))
-    if all_read_ids:
+    # 标记已用
+    if picked_ids:
         for e in db["entries"]:
-            if e["story_id"] in set(all_read_ids):
+            if e["story_id"] in picked_ids:
                 e["isNew"] = False
-                # used 保持 false，brief 只读不占用
-    if all_selected_ids or all_read_ids:
+                e["used"] = True
+    if read_ids:
+        for e in db["entries"]:
+            if e["story_id"] in read_ids:
+                e["isNew"] = False
+    if picked_ids or read_ids:
         save_db(db)
-        if all_selected_ids:
-            print(f"  ✓ {len(set(all_selected_ids))} 条 trend/tool 条目已标记为 used")
-
-    # 统计待填 — 内容还是占位符的才提
-    todo = []
-    for s in ["trend", "tool", "brief"]:
-        d = output[s]
-        cover = d.get("cover", {})
-        title = cover.get("title", {})
-        if title.get("big2") == "待填大标题":
-            todo.append(f"  {s}/封面 — 标题仍是占位符")
-        for section_name, section_key in [("封面", "cover"), ("P2", "p2")]:
-            section = d.get(section_key, {})
-            items = section.get("items", [])
-            if items:
-                first = items[0]
-                if isinstance(first, dict):
-                    vals = list(first.values())
-                    if any("待填" in str(v) for v in vals):
-                        todo.append(f"  {s}/{section_name} — 含占位符内容")
-
-    if todo:
-        print(f"\n  ⚠️  待人工处理:")
-        for t in todo:
-            print(t)
-    else:
-        print(f"\n  ✅ 全自动填充完成")
+        if picked_ids:
+            print(f"  ✓ {len(set(picked_ids))} 条已标记为 used")
 
     print(f"\n{'='*50}")
-    print(f"  下一步: 编辑 templates/template.json")
+    print(f"  下一步: 获取正文 → 写中文")
     print(f"          python3 scripts/generate.py")
     print(f"{'='*50}\n")
 
