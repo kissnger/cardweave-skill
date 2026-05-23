@@ -43,13 +43,14 @@ ${HERMES_SKILL_DIR}/
 ├── assets/
 │   └── base.html                    # CSS master template (color variables, layout grid)
 ├── scripts/
+│   ├── setup.py                     # Reset template.json with today's date
 │   ├── search_all.py                # Search all sources → db
 │   ├── hn_search.py                 # Algolia HN Search API wrapper
-│   ├── curate.py                    # Read db + rules → fill template.json
-│   ├── editorial.py                 # Auto-fetch URLs → write Chinese copy
+│   ├── curate.py                    # Read db + rules → output 选题.json
 │   ├── generate.py                  # template.json + base.html → 9 HTML pages
-│   ├── translate.py                 # Static translation table (legacy, editorial.py preferred)
-│   └── setup.py                     # Reset template.json with today's date
+│   ├── editorial.py                 # Legacy: auto-fill Chinese (retired from pipeline)
+│   ├── translate.py                 # Legacy: static translation table
+│   └── screenshot.mjs               # Playwright screenshot script
 ├── templates/
 │   └── template.json                # Data source (the pipeline target)
 ├── references/
@@ -66,9 +67,17 @@ ${HERMES_SKILL_DIR}/
 
 ## Pipeline
 
-All commands run from `${HERMES_SKILL_DIR}`. The pipeline is **unidirectional** — each step reads the previous step's output and produces input for the next.
+The pipeline is **unidirectional** — each step reads the previous step's output and produces input for the next.
 
-### Step 1 — Search → Database
+### Step 0 — Date Init (setup.py)
+
+```bash
+cd ${HERMES_SKILL_DIR} && python3 scripts/setup.py
+```
+
+Generates an empty `templates/template.json` with `_meta.date` locked to today. This date is never changed by subsequent steps. The output directory and card footer always show this date.
+
+### Step 1 — Search → Database (search_all.py)
 
 ```bash
 cd ${HERMES_SKILL_DIR} && python3 scripts/search_all.py
@@ -76,50 +85,29 @@ cd ${HERMES_SKILL_DIR} && python3 scripts/search_all.py
 
 Reads `rules/curation.yaml` search sources, queries Algolia HN Search API (free, no key needed), deduplicates, writes to `cardweave_db.json`. Each entry has `isNew=true`, `used=false`.
 
-**Search sources** (configured in `rules/curation.yaml`):
-
-| Source | Type | Queries (OR) | Min points | Window |
-|--------|------|-------------|------------|--------|
-| show_hn | show_hn | AI, agent | 10 | 48h |
-| front_page | front_page | AI, agent, developer | 5 | 48h |
-| ai_keyword | search | AI training, agent LLM, compute model | 20 | 48h |
-| dev_keyword | search | AI agent, developer tool, database | 10 | 48h |
-
-### Step 2 — Curate → Template
+### Step 2 — Curate → 选题.json (curate.py)
 
 ```bash
-cd ${HERMES_SKILL_DIR} && python3 scripts/curate.py --date YYYY-MM-DD
+cd ${HERMES_SKILL_DIR} && python3 scripts/curate.py
 ```
 
-Reads `cardweave_db.json` + `rules/curation.yaml`, selects best entries per series, writes candidate data to `templates/template.json`. The `--date` parameter sets `_meta.date` — use the data's creation date, not the current system date.
+Reads `_meta.date` from `templates/template.json`, selects candidate entries per series from the DB, writes to `{date}/选题.json`. Does NOT touch template.json.
 
-**Output rules** (per `rules/curation.yaml`):
+- **Input:** cardweave_db.json + rules/curation.yaml + templates/template.json (_meta.date)
+- **Output:** `{date}/选题.json` — DB-format entries organized by brief/trend/tool
+- **Fallback:** If today's data is sparse (<5 entries or max<50 points), automatically uses the latest date with sufficient data. The output directory date (`{date}/`) stays locked to _meta.date regardless of fallback.
 
-| Series | Count | Sources | Min points | Notes |
-|--------|-------|---------|------------|-------|
-| brief | 3 fixed | front_page, ai_keyword | 30 | Non-consuming (read-only) |
-| trend | 1-3 | front_page, ai_keyword, dev_keyword | 200 | |
-| tool | 1 fixed | show_hn, dev_keyword (no front_page) | 2 | Show HN priority |
+### Step 3 — Fetch, Translate, Fill (Agent manual)
 
-**Output order:** brief → trend → tool (brief picks first, doesn't consume entries).
+The Agent reads `选题.json`, fetches each URL's content, and produces three things:
 
-### Step 3 — Editorial (Auto-Fill Chinese)
+1. **正文.md** — Source text (≤500 chars) saved to `正文/{series}_{n}.md`
+2. **template.json** — Filled with Chinese content (titles, descriptions, articles)
+3. **公众号文章** — 3 WeChat articles saved as `{series}_article.html`
 
-```bash
-cd ${HERMES_SKILL_DIR} && python3 scripts/editorial.py
-```
+This step is manual because the content requires creative judgment (Chinese headlines, article structure, tone).
 
-Iterates each series' cover/P2/P3 slots, fetches the original URL content via urllib, extracts the first 3000 characters of meaningful text, and fills in Chinese:
-- Cover title (三段式: pre / big2 / highlight)
-- Subtitle
-- P2 items (descriptions)
-- P3 body text and closing quote
-
-Only overwrites **placeholders** left by curate.py (those starting with "待填", English truncated with "…", pure-URL subtitles). Never overwrites existing Chinese copy.
-
-**Gate check in generate.py:** `generate.py` refuses to run if any "待填" placeholder remains — tells you to run editorial.py first.
-
-### Step 4 — Generate HTML
+### Step 4 — Generate HTML (generate.py)
 
 ```bash
 cd ${HERMES_SKILL_DIR} && python3 scripts/generate.py
@@ -129,8 +117,8 @@ cd ${HERMES_SKILL_DIR} && python3 scripts/generate.py -o /path/to/output
 
 Reads `templates/template.json` + `assets/base.html` (CSS master), renders 9 HTML pages.
 
-Default output: `${HERMES_SKILL_DIR}/{date}/` (e.g., `cardweave-skill/2026-05-23/`).
-Use `-o` / `--output-dir` to redirect to any base path — the date subdirectory is created automatically underneath (e.g., `-o ./output` → `./output/2026-05-23/`).
+Default output: `${HERMES_SKILL_DIR}/{date}/` (gitignored).
+Use `-o` / `--output-dir` to redirect to any base path — the date subdirectory is created automatically underneath (e.g., `-o ./output` → `./output/{date}/`).
 
 ```
 {date}/

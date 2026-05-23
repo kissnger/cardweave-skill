@@ -46,43 +46,6 @@ def save_db(db):
     with open(DB_FILE, "w", encoding="utf-8") as f:
         json.dump(db, f, ensure_ascii=False, indent=2)
 
-def save_template(data):
-    with open(TEMPLATE_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-    print(f"  ✓ template.json 已更新")
-
-
-# ── URL 内容获取 ──────────────────────────────────────────
-
-class TextExtractor(HTMLParser):
-    """简单 HTML 文本提取器"""
-    def __init__(self):
-        super().__init__()
-        self._texts = []
-        self._skip = False
-    def handle_starttag(self, tag, attrs):
-        if tag in ("script", "style", "nav", "footer", "header"):
-            self._skip = True
-    def handle_endtag(self, tag):
-        if tag in ("script", "style", "nav", "footer", "header"):
-            self._skip = False
-    def handle_data(self, data):
-        if not self._skip:
-            t = data.strip()
-            if t and len(t) > 20:
-                self._texts.append(t)
-    def get_text(self, max_chars=500):
-        result = []
-        total = 0
-        for t in self._texts:
-            if total + len(t) > max_chars:
-                result.append(t[:max_chars - total])
-                break
-            result.append(t)
-            total += len(t)
-        return "\n".join(result)
-
-
 def fetch_page_text(url, timeout=5):
     """抓取 URL 页面文本内容"""
     try:
@@ -275,120 +238,6 @@ def build_steps(candidates, select_rules, date_str):
     }
 
 
-def build_series(series_name, rules, db, date_str):
-    """构建一个系列（trend/tool/brief）"""
-    r = rules["curation"][series_name]
-    src_ids = r["sources"]
-    select_new = r.get("select", {}).get("isNew", True)
-
-    brand_colors = {
-        "trend": {"primary": "#A855F7", "gradient": ["#D8B4FE", "#A855F7", "#7C3AED"], "bg_word": "SHIFT"},
-        "tool":  {"primary": "#34D399", "gradient": ["#6EE7B7", "#34D399", "#059669"], "bg_word": "TOOL"},
-        "brief": {"primary": "#F59E0B", "gradient": ["#FCD34D", "#F59E0B", "#D97706"], "bg_word": "BRIEF"},
-    }
-    series_names = {
-        "trend": {"name": "商业趋势", "name_en": "Business Trend"},
-        "tool":  {"name": "工具教程", "name_en": "Tool Tutorial"},
-        "brief": {"name": "每日简讯", "name_en": "Daily Brief"},
-    }
-
-    result = {**series_names[series_name], "brand": brand_colors[series_name]}
-
-    # 从扁平 db 中筛候选：当天 + 指定分类 + 未用优先
-    all_candidates = []
-    for src_id in src_ids:
-        all_candidates.extend(get_entries(db, date_str=date_str, category=src_id))
-    # 跨源去重：相同 story_id 只保留最高分
-    seen = {}
-    for c in all_candidates:
-        sid = c["story_id"]
-        if sid not in seen or c.get("points", 0) > seen[sid].get("points", 0):
-            seen[sid] = c
-    all_candidates = list(seen.values())
-    # 先按 isNew 排，再按分数或时间排
-    sort_by = r.get("cover", {}).get("select", {}).get("sort_by", "points")
-    if sort_by == "created_at":
-        all_candidates.sort(key=lambda x: (x.get("isNew", False), x.get("created_at", "")), reverse=True)
-    else:
-        all_candidates.sort(key=lambda x: (x.get("isNew", False), x.get("points", 0)), reverse=True)
-
-    # ── Cover ──
-    cover_r = r.get("cover", {})
-    cover_select = cover_r.get("select", {})
-    cover_candidates = [c for c in all_candidates
-                        if c.get("points", 0) >= cover_select.get("min_points", 0)
-                        and not c.get("used", False)][:cover_select.get("max_candidates", 5)]
-
-    # priority_tags: 把优先源的同分条目提到前面
-    priority_tags = cover_select.get("priority_tags", [])
-    if priority_tags:
-        priority = [c for c in cover_candidates if c.get("category") in priority_tags]
-        others = [c for c in cover_candidates if c.get("category") not in priority_tags]
-        cover_candidates = (priority + others)[:cover_select.get("max_candidates", 5)]
-    result["cover"] = build_cover(cover_candidates, cover_select, cover_r.get("layout", {}), date_str)
-
-    # ── P2 ──
-    p2_r = r.get("p2", {})
-    p2_layout = p2_r.get("layout", "pain-list")
-    p2_select = p2_r.get("select", {})
-    p2_candidates = [c for c in all_candidates
-                     if c.get("points", 0) >= p2_select.get("min_points", 0)
-                     and not c.get("used", False)][:p2_select.get("max_items", 5) * 2]
-
-    if p2_layout == "pain-list":
-        result["p2"] = build_pain_list(p2_candidates, p2_select, date_str)
-    elif p2_layout == "data-list":
-        result["p2"] = build_data_list(p2_candidates, p2_select, date_str)
-    elif p2_layout == "news-list":
-        result["p2"] = build_news_list(p2_candidates, p2_select, date_str)
-    else:
-        result["p2"] = {"tag": "待填", "title": "待填", "type": "待填", "items": []}
-
-    # ── P3 ──
-    p3_r = r.get("p3", {})
-    p3_layout = p3_r.get("layout", "body-list")
-    p3_select = p3_r.get("select", {})
-    p3_candidates = [c for c in all_candidates
-                     if c.get("points", 0) >= (p3_select.get("min_points", 0) or p2_select.get("min_points", 0))
-                     and not c.get("used", False)][:p3_select.get("max_items", 5)]
-
-    if p3_layout == "steps":
-        result["p3"] = build_steps(p3_candidates, p3_select, date_str)
-    elif p3_layout == "body-list":
-        result["p3"] = build_body_list(p3_candidates, p3_select, date_str)
-    else:
-        result["p3"] = {"tag": "待填", "title": "待填", "type": "待填", "items": [], "closing": "待填"}
-
-    return result
-
-
-def print_review(series_name, data):
-    """打印候选供审阅"""
-    print(f"\n  ── {series_name.upper()} ──")
-    for section in ["cover", "p2"]:
-        cands = data.get(section, {}).get("_candidates", [])
-        if cands:
-            label = "P2" if section == "p2" else "封面"
-            print(f"  {label} 候选:")
-            for c in cands:
-                tag = " 🆕" if c.get("isNew") else ""
-                tag += " ✅已用" if c.get("used") else ""
-                print(f"    · {c.get('title','?')[:50]:50s}  ↑{c.get('points',0):3d}  [{c.get('category','?')}]{tag}")
-        else:
-            items = data.get(section, {}).get("items", [])
-            if items:
-                label = "P2" if section == "p2" else "封面"
-                print(f"  {label} 已自动填充 ({len(items)} 项)")
-
-
-def mark_used(db, ids):
-    """将 db 中指定 story_id 的条目标记为已使用"""
-    for e in db["entries"]:
-        if e["story_id"] in ids:
-            e["isNew"] = False
-            e["used"] = True
-
-
 def pick_series(series_name, rules, db, date_str):
     """为一个系列选选题，返回 DB 原始格式的条目列表"""
     r = rules["curation"][series_name]
@@ -437,6 +286,7 @@ def main():
                 date_str = ts
         except (json.JSONDecodeError, KeyError):
             pass
+    output_date = date_str  # 输出目录日期（setup 锁定），不受 fallback 影响
 
     # 检查数据是否足够，不够则 fallback
     day_entries = get_entries(db, date_str=date_str)
@@ -460,7 +310,7 @@ def main():
     # 为各系列选题
     picked_ids = []
     read_ids = []
-    output = {"date": date_str}
+    output = {"date": output_date}
     for series_name in ["brief", "trend", "tool"]:
         items = pick_series(series_name, rules, db, date_str)
         output[series_name] = items
@@ -472,7 +322,7 @@ def main():
                 picked_ids.append(sid)
 
     print(f"\n{'='*50}")
-    print(f"  Cardweave 选题 — {date_str}  |  库中共 {len(db['entries'])} 条")
+    print(f"  Cardweave 选题 — {output_date}  |  库中共 {len(db['entries'])} 条")
     for s in ["brief", "trend", "tool"]:
         items = output[s]
         pts = ", ".join(f"↑{i['points']}" for i in items[:5])
@@ -487,7 +337,7 @@ def main():
         return
 
     # 写出选题 json
-    out_dir = ROOT / date_str
+    out_dir = ROOT / output_date
     out_dir.mkdir(parents=True, exist_ok=True)
     topic_file = out_dir / "选题.json"
     with open(topic_file, "w", encoding="utf-8") as f:
