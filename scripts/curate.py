@@ -286,31 +286,11 @@ def main():
                 date_str = ts
         except (json.JSONDecodeError, KeyError):
             pass
-    output_date = date_str  # 输出目录日期（setup 锁定），不受 fallback 影响
-
-    # 检查数据是否足够，不够则 fallback
-    day_entries = get_entries(db, date_str=date_str)
-    max_pts = max((e.get("points", 0) for e in day_entries), default=0)
-    needs_fallback = len(day_entries) < 5 or max_pts < 50
-    if needs_fallback:
-        dates = sorted({e["created_at"][:10] for e in db.get("entries", [])}, reverse=True)
-        dates = [d for d in dates if d != date_str][:10]
-        if not dates and not day_entries:
-            print("[错误] 数据库中没有任何数据", file=sys.stderr)
-            print("  先跑: python3 scripts/search_all.py", file=sys.stderr)
-            sys.exit(1)
-        for fallback in dates:
-            fb = get_entries(db, date_str=fallback)
-            fb_max = max((e.get("points", 0) for e in fb), default=0)
-            if len(fb) >= 5 and fb_max >= 50:
-                print(f"  [提示] {date_str} 数据不足({len(day_entries)}条,最高{max_pts}分)，使用 {fallback} 的数据")
-                date_str = fallback
-                break
 
     # 为各系列选题
     picked_ids = []
     read_ids = []
-    output = {"date": output_date}
+    output = {"date": date_str}
     for series_name in ["brief", "trend", "tool"]:
         items = pick_series(series_name, rules, db, date_str)
         output[series_name] = items
@@ -322,7 +302,7 @@ def main():
                 picked_ids.append(sid)
 
     print(f"\n{'='*50}")
-    print(f"  Cardweave 选题 — {output_date}  |  库中共 {len(db['entries'])} 条")
+    print(f"  Cardweave 选题 — {date_str}  |  库中共 {len(db['entries'])} 条")
     for s in ["brief", "trend", "tool"]:
         items = output[s]
         pts = ", ".join(f"↑{i['points']}" for i in items[:5])
@@ -337,7 +317,7 @@ def main():
         return
 
     # 写出选题 json
-    out_dir = ROOT / output_date
+    out_dir = ROOT / date_str
     out_dir.mkdir(parents=True, exist_ok=True)
     topic_file = out_dir / "选题.json"
     with open(topic_file, "w", encoding="utf-8") as f:

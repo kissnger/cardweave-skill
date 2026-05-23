@@ -95,7 +95,6 @@ Reads `_meta.date` from `templates/template.json`, selects candidate entries per
 
 - **Input:** cardweave_db.json + rules/curation.yaml + templates/template.json (_meta.date)
 - **Output:** `{date}/选题.json` — DB-format entries organized by brief/trend/tool
-- **Fallback:** If today's data is sparse (<5 entries or max<50 points), automatically uses the latest date with sufficient data. The output directory date (`{date}/`) stays locked to _meta.date regardless of fallback.
 
 ### Step 3 — Fetch, Translate, Fill (Agent manual)
 
