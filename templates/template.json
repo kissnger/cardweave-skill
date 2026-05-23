@@ -9,51 +9,27 @@
     "name_en": "Daily Brief",
     "brand": {
       "primary": "#F59E0B",
-      "gradient": [
-        "#FCD34D",
-        "#F59E0B",
-        "#D97706"
-      ],
+      "gradient": ["#FCD34D", "#F59E0B", "#D97706"],
       "bg_word": "BRIEF"
     },
     "cover": {
-      "_candidates": [
-        {
-          "story_id": "48239786",
-          "title": "Domain-Camouflaged Injection Attacks Evade Detection in Multi-Agent LLM Systems",
-          "url": "https://arxiv.org/abs/2605.22001",
-          "created_at": "2026-05-22T18:46:07Z",
-          "_tags": [
-            "story",
-            "author_sbulaev",
-            "story_48239786"
-          ],
-          "points": 38,
-          "category": "ai_keyword",
-          "isNew": true,
-          "used": false
-        }
-      ],
-      "tag": "AI & Agent 简讯 · ai_keyword",
+      "tag": "AI & Agent 简讯 · 5月22日",
       "title": {
-        "pre": "今日值得关注的",
-        "big2": "AI 今日看点",
-        "highlight": "今日聚焦 · ↑38"
+        "pre": "三个信号",
+        "big2": "看清今天的 AI 版图",
+        "highlight": "域伪装注入 · 模型数据库 · Agent 看板"
       },
-      "subtitle": "今日 AI / Agent 领域值得关注的重要动态，一文速览。",
-      "footer": "2026-05-22 · 每日简讯"
+      "subtitle": "域伪装注入攻击突破多 Agent 防线 · Models.dev 开源 AI 模型数据库 · KanBots 重新定义 Agent 协作",
+      "footer": "2026-05-23 · 每日简讯"
     },
     "p2": {
-      "_candidates": [],
       "tag": "今日要闻",
       "title": "三条动态 值得关注",
       "type": "news-list",
       "items": [
-        {
-          "title": "Domain-Camouflaged Injection Attacks Evade Detection in Multi-Agent LLM Systems",
-          "desc": "[2605.22001] Blind Spots in the Guard: How Domain-Camouflaged Injection Attacks Evade Detection in …",
-          "_url": "https://arxiv.org/abs/2605.22001"
-        }
+        {"title": "域伪装注入攻击突破多 Agent 防线", "desc": "攻击者通过伪装成合法域名的请求注入恶意指令，绕过多 Agent 系统的检测。论文已被 EMNLP 2026 接收。"},
+        {"title": "Models.dev 开源 AI 模型数据库", "desc": "社区驱动的 AI 模型规格、定价和能力数据库。SST 团队出品，3849 次提交，MIT 开源。"},
+        {"title": "KanBots：每张卡片跑一个 Agent", "desc": "开源桌面看板，每张卡片调度 Claude Code 或 Codex 在独立工作目录中并行运行 Agent。HN 235 分。"}
       ]
     },
     "p3": {
@@ -61,16 +37,10 @@
       "title": "三条信号 一个趋势",
       "type": "body-list",
       "items": [
-        {
-          "label": "深入分析 1",
-          "text": "[2605.22001] Blind Spots in the Guard: How Domain-Camouflaged Injection Attacks Evade Detection in Multi-Agent LLM Syst…"
-        },
-        {
-          "label": "深入分析 2",
-          "text": "[2605.22001] Blind Spots in the Guard: How Domain-Camouflaged Injection Attacks Evade Detection in Multi-Agent LLM Syst…"
-        }
+        {"label": "信号 1", "text": "多 Agent 安全成新战场——域伪装注入攻击提醒我们，Agent 协作的信任边界需要重新定义"},
+        {"label": "信号 2", "text": "模型信息透明化——Models.dev 这类社区项目标志着 AI 生态从混乱走向标准化"}
       ],
-      "closing": "信息的价值不在于获取，而在于判断。今天就到这里。"
+      "closing": "今天的三个信号指向同一方向：AI 从实验走向工程化，安全、信息、工具三条线都在加速成熟。"
     }
   },
   "trend": {
@@ -78,45 +48,39 @@
     "name_en": "Business Trend",
     "brand": {
       "primary": "#A855F7",
-      "gradient": [
-        "#D8B4FE",
-        "#A855F7",
-        "#7C3AED"
-      ],
+      "gradient": ["#D8B4FE", "#A855F7", "#7C3AED"],
       "bg_word": "SHIFT"
     },
     "cover": {
-      "tag": "AI 趋势",
+      "tag": "AI 趋势 · 关键信号",
       "title": {
-        "pre": "暂无数据",
-        "big2": "今天没有相关内容",
-        "highlight": "请明日再来"
+        "pre": "KanBots 让 AI Agent",
+        "big2": "从聊天变成看板系统",
+        "highlight": "每张卡片并行运行 Agent"
       },
-      "subtitle": "数据源中暂无符合条件的条目",
-      "footer": "2026-05-23 · trend"
+      "subtitle": "KanBots 是一个开源看板应用，每张卡片可调度 Claude Code 或 Codex 在独立工作目录中并行运行 Agent。支持自动驾驶模式。Github 开源，MIT 协议。",
+      "footer": "2026-05-23 · 趋势观察"
     },
     "p2": {
-      "tag": "暂无内容",
-      "title": "今日暂缺",
-      "type": "news-list",
+      "tag": "关键数据",
+      "title": "KanBots 核心指标",
+      "type": "data-list",
       "items": [
-        {
-          "title": "数据不足",
-          "desc": "没有达到最低分要求的条目"
-        }
-      ]
+        {"num": "↑235", "title": "HN 热度", "desc": "Hacker News 首页 235 分"},
+        {"num": "4", "title": "并行 Agent", "desc": "最多 4 个 Agent 同时在独立分支工作"},
+        {"num": "MIT", "title": "完全开源", "desc": "免费使用，本地运行，零遥测"}
+      ],
+      "source": "kanbots.dev"
     },
     "p3": {
-      "tag": "等待更新",
-      "title": "明日继续",
+      "tag": "行业观察",
+      "title": "关键洞察",
       "type": "body-list",
       "items": [
-        {
-          "label": "提示",
-          "text": "数据源中暂无符合主题和分数门槛的条目。"
-        }
+        {"label": "趋势信号", "text": "Agent 协作从串行转向并行——KanBots 让多个 Agent 在不同工作目录各自为战"},
+        {"label": "范式转变", "text": "「看板即界面」正在成为 Agent 时代的新范式——Agent 调度变得可视化"}
       ],
-      "closing": "明天会有新的信息。"
+      "closing": "Agent 的下一站不是更强的单兵，而是更好的协作系统。"
     }
   },
   "tool": {
@@ -124,120 +88,37 @@
     "name_en": "Tool Tutorial",
     "brand": {
       "primary": "#34D399",
-      "gradient": [
-        "#6EE7B7",
-        "#34D399",
-        "#059669"
-      ],
+      "gradient": ["#6EE7B7", "#34D399", "#059669"],
       "bg_word": "TOOL"
     },
     "cover": {
-      "_candidates": [
-        {
-          "story_id": "48241172",
-          "title": "Models.dev: open-source database of AI model specs, pricing, and capabilities",
-          "url": "https://github.com/anomalyco/models.dev",
-          "created_at": "2026-05-22T20:26:07Z",
-          "_tags": [
-            "story",
-            "author_maxloh",
-            "story_48241172"
-          ],
-          "points": 146,
-          "category": "dev_keyword",
-          "isNew": true,
-          "used": false
-        }
-      ],
-      "tag": "开源新工具 · dev_keyword",
+      "tag": "开源新工具 · 模型数据库",
       "title": {
-        "pre": "开源利器",
-        "big2": "开源工具推荐",
-        "highlight": "今日聚焦 · ↑146"
+        "pre": "Models.dev",
+        "big2": "开源 AI 模型大全",
+        "highlight": "查模型 · 比价格 · 看能力"
       },
-      "subtitle": "今日 AI / Agent 领域值得关注的重要动态，一文速览。",
-      "footer": "2026-05-22 · 效率实践"
+      "subtitle": "社区驱动的 AI 模型数据库，覆盖数百个模型规格、定价和能力信息。SST 团队出品，MIT 开源。",
+      "footer": "2026-05-23 · 效率实践"
     },
     "p2": {
-      "_selected_ids": [
-        "48241172"
-      ],
       "tag": "传统痛点",
       "title": "为什么需要这个工具？",
       "type": "pain-list",
       "items": [
-        {
-          "problem": "传统方法效率低，需要大量人工干预和反复沟通",
-          "solution": "开源方案 · 详见项目主页",
-          "_url": "https://github.com/anomalyco/models.dev"
-        }
+        {"problem": "AI 模型信息碎片化，比价靠人工", "solution": "Models.dev 把各厂商的模型规格、定价、能力统一到 TOML 数据库，API 查询秒出结果"}
       ]
     },
     "p3": {
-      "_candidates": [
-        {
-          "story_id": "48241172",
-          "title": "Models.dev: open-source database of AI model specs, pricing, and capabilities",
-          "url": "https://github.com/anomalyco/models.dev",
-          "created_at": "2026-05-22T20:26:07Z",
-          "_tags": [
-            "story",
-            "author_maxloh",
-            "story_48241172"
-          ],
-          "points": 146,
-          "category": "dev_keyword",
-          "isNew": true,
-          "used": false
-        },
-        {
-          "story_id": "48231575",
-          "title": "Show HN: Spec-Driven Development Workflow for Claude Code",
-          "url": "https://news.ycombinator.com/item?id=48231575",
-          "created_at": "2026-05-22T03:17:38Z",
-          "_tags": [
-            "story",
-            "author_sermakarevich",
-            "story_48231575",
-            "show_hn"
-          ],
-          "points": 19,
-          "category": "show_hn",
-          "isNew": true,
-          "used": false
-        },
-        {
-          "story_id": "48236762",
-          "title": "Show HN: Prisma Next – data contracts, migration graphs, agent DX",
-          "url": "https://github.com/prisma/prisma-next",
-          "created_at": "2026-05-22T14:53:32Z",
-          "_tags": [
-            "story",
-            "author_wmadden",
-            "story_48236762",
-            "show_hn"
-          ],
-          "points": 13,
-          "category": "show_hn",
-          "isNew": true,
-          "used": false
-        }
-      ],
       "tag": "快速上手",
       "title": "三步 用起来",
       "type": "steps",
       "items": [
-        {
-          "code": "git clone https://github.com/anomalyco/models.dev"
-        },
-        {
-          "code": "cd models.dev && ls"
-        },
-        {
-          "code": "cat models.dev/README.md"
-        }
+        {"code": "git clone https://github.com/anomalyco/models.dev"},
+        {"code": "ls providers/  # 查看已收录厂商"},
+        {"code": "cat providers/anthropic/models/claude-sonnet-4.toml"}
       ],
-      "footer": "开源项目 · MIT"
+      "footer": "开源项目 · MIT · SST 团队"
     }
   }
 }
