@@ -43,14 +43,12 @@ ${HERMES_SKILL_DIR}/
 ├── assets/
 │   └── base.html                    # CSS master template (color variables, layout grid)
 ├── scripts/
-│   ├── setup.py                     # Reset template.json with today's date
-│   ├── search_all.py                # Search all sources → db
-│   ├── hn_search.py                 # Algolia HN Search API wrapper
-│   ├── curate.py                    # Read db + rules → output 选题.json
-│   ├── generate.py                  # template.json + base.html → 9 HTML pages
-│   ├── editorial.py                 # Legacy: auto-fill Chinese (retired from pipeline)
-│   ├── translate.py                 # Legacy: static translation table
-│   └── screenshot.mjs               # Playwright screenshot script
+│   ├── step0_setup.py              # Reset template.json with today's date
+│   ├── step1_search.py             # Search all sources → db
+│   ├── hn_search.py                # Algolia HN Search API wrapper (library)
+│   ├── step2_curate.py             # Read db + rules → output 选题.json
+│   ├── step4_generate.py           # template.json + base.html → 9 HTML pages
+│   └── step5_screenshot.mjs        # Playwright screenshot script
 ├── templates/
 │   └── template.json                # Data source (the pipeline target)
 ├── references/
@@ -72,7 +70,7 @@ The pipeline is **unidirectional** — each step reads the previous step's outpu
 ### Step 0 — Date Init (setup.py)
 
 ```bash
-cd ${HERMES_SKILL_DIR} && python3 scripts/setup.py
+cd ${HERMES_SKILL_DIR} && python3 scripts/step0_setup.py
 ```
 
 Generates an empty `templates/template.json` with `_meta.date` locked to today. This date is never changed by subsequent steps. The output directory and card footer always show this date.
@@ -80,7 +78,7 @@ Generates an empty `templates/template.json` with `_meta.date` locked to today. 
 ### Step 1 — Search → Database (search_all.py)
 
 ```bash
-cd ${HERMES_SKILL_DIR} && python3 scripts/search_all.py
+cd ${HERMES_SKILL_DIR} && python3 scripts/step1_search.py
 ```
 
 Reads `rules/curation.yaml` search sources, queries Algolia HN Search API (free, no key needed), deduplicates, writes to `cardweave_db.json`. Each entry has `isNew=true`, `used=false`.
@@ -88,7 +86,7 @@ Reads `rules/curation.yaml` search sources, queries Algolia HN Search API (free,
 ### Step 2 — Curate → 选题.json (curate.py)
 
 ```bash
-cd ${HERMES_SKILL_DIR} && python3 scripts/curate.py
+cd ${HERMES_SKILL_DIR} && python3 scripts/step2_curate.py
 ```
 
 Reads `_meta.date` from `templates/template.json`, selects candidate entries per series from the DB, writes to `{date}/选题.json`. Does NOT touch template.json.
@@ -109,9 +107,9 @@ This step is manual because the content requires creative judgment (Chinese head
 ### Step 4 — Generate HTML (generate.py)
 
 ```bash
-cd ${HERMES_SKILL_DIR} && python3 scripts/generate.py
+cd ${HERMES_SKILL_DIR} && python3 scripts/step4_generate.py
 # Or specify output directory:
-cd ${HERMES_SKILL_DIR} && python3 scripts/generate.py -o /path/to/output
+cd ${HERMES_SKILL_DIR} && python3 scripts/step4_generate.py -o /path/to/output
 ```
 
 Reads `templates/template.json` + `assets/base.html` (CSS master), renders 9 HTML pages.
@@ -150,9 +148,9 @@ Two approaches:
 
 **A) Automatic (if Playwright is installed):**
 ```bash
-cd ${HERMES_SKILL_DIR} && python3 scripts/generate.py --screenshot
+cd ${HERMES_SKILL_DIR} && python3 scripts/step4_generate.py --screenshot
 # With custom output:
-cd ${HERMES_SKILL_DIR} && python3 scripts/generate.py -o /path/to/output --screenshot
+cd ${HERMES_SKILL_DIR} && python3 scripts/step4_generate.py -o /path/to/output --screenshot
 ```
 
 **B) Manual via `npx playwright`:**

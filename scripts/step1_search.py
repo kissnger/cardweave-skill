@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Cardweave 搜索入库 — search_all.py
+Cardweave 搜索入库 — step1_search.py
 
 读取 rules/curation.yaml 的 search.sources 配置，
 依次执行所有搜索，结果以扁平数组存入 cardweave_db.json。
 
 用法：
   cd cardweave-skill/
-  python3 scripts/search_all.py              # 搜所有源，存 db
-  python3 scripts/search_all.py --list       # 只看有哪些搜索源
-  python3 scripts/search_all.py --source show_hn  # 只搜指定源
+  python3 scripts/step1_search.py              # 搜所有源，存 db
+  python3 scripts/step1_search.py --list       # 只看有哪些搜索源
+  python3 scripts/step1_search.py --source show_hn  # 只搜指定源
 """
 import json, sys, os
 from pathlib import Path

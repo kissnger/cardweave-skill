@@ -14,10 +14,9 @@ cd cardweave-skill/
 ## 一键运行
 
 ```bash
-python3 scripts/search_all.py     # 搜索 → 入库
-python3 scripts/curate.py --date $(date +%Y-%m-%d)   # 出库 → template.json
-python3 scripts/editorial.py      # 自动抓原文写中文
-python3 scripts/generate.py       # 生成 9 页 HTML
+python3 scripts/step1_search.py     # 搜索 → 入库
+python3 scripts/step2_curate.py     # 出选题
+python3 scripts/step4_generate.py   # 生成 9 页 HTML
 ```
 
 打开 `{日期}/trend/cover.html` 看效果。
@@ -29,7 +28,7 @@ python3 scripts/generate.py       # 生成 9 页 HTML
 ```bash
 npm install -g playwright
 npx playwright install chromium
-python3 scripts/generate.py --screenshot
+python3 scripts/step4_generate.py --screenshot
 ```
 
 截图输出到 `{日期}/screenshots/`。

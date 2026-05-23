@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-每日卡片海报生成器 — Cardweave
+Cardweave 每日卡片海报生成器 — step4_generate.py
 
 用法：
   cd cardweave-skill/
-  python3 scripts/generate.py                                    # 生成 HTML
-  python3 scripts/generate.py [data.json]                       # 用指定数据源
-  python3 scripts/generate.py -o /path/to/output                # 输出到指定目录
-  python3 scripts/generate.py --screenshot                      # + PNG 截图
+  python3 scripts/step4_generate.py                              # 生成 HTML
+  python3 scripts/step4_generate.py [data.json]                  # 用指定数据源
+  python3 scripts/step4_generate.py -o /path/to/output           # 输出到指定目录
+  python3 scripts/step4_generate.py --screenshot                 # + PNG 截图
 
 参数：
   data.json          可选，数据源路径。省略则用 templates/template.json

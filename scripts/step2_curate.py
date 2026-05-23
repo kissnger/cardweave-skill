@@ -1,18 +1,14 @@
 #!/usr/bin/env python3
 """
-Cardweave 内容出库 — curate.py
+Cardweave 内容出库 — step2_curate.py
 
 读取 cardweave_db.json（扁平条目数组）+ rules/curation.yaml，
-按策展规则自动填充 template.json。
-
-策略：
-  - auto_score → 自动选最优条目填入
-  - manual → 填入候选列表，我看了再调
+按策展规则输出选题.json。
 
 用法：
   cd cardweave-skill/
-  python3 scripts/curate.py                            # 读 template.json 的日期
-  python3 scripts/curate.py --review                   # 只看候选，不写入
+  python3 scripts/step2_curate.py                       # 读 template.json 的日期
+  python3 scripts/step2_curate.py --review              # 只看候选，不写入
 """
 import json, sys
 from urllib.request import urlopen, Request
@@ -37,7 +33,7 @@ def load_rules():
 def load_db():
     if not DB_FILE.exists():
         print(f"[错误] cardweave_db.json 不存在", file=sys.stderr)
-        print(f"  先跑: python3 scripts/search_all.py", file=sys.stderr)
+        print(f"  先跑: python3 scripts/step1_search.py", file=sys.stderr)
         sys.exit(1)
     with open(DB_FILE) as f:
         return json.load(f)
