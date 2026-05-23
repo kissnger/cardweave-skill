@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-05-23T22:06:53.854786",
+  "last_updated": "2026-05-23T22:42:28.895200",
   "entries": [
     {
       "story_id": "48244649",
@@ -14,8 +14,8 @@
       ],
       "points": 12,
       "category": "show_hn",
-      "isNew": false,
-      "used": true
+      "isNew": true,
+      "used": false
     },
     {
       "story_id": "48244649",
@@ -30,6 +30,21 @@
       ],
       "points": 12,
       "category": "show_hn",
+      "isNew": true,
+      "used": false
+    },
+    {
+      "story_id": "48244434",
+      "title": "Microsoft reports AI is more expensive than paying human employees",
+      "url": "https://fortune.com/2026/05/22/microsoft-ai-cost-problem-tokens-agents/",
+      "created_at": "2026-05-23T03:44:16Z",
+      "_tags": [
+        "story",
+        "author_nreece",
+        "story_48244434"
+      ],
+      "points": 209,
+      "category": "dev_keyword",
       "isNew": false,
       "used": true
     },
@@ -43,26 +58,10 @@
         "author_nreece",
         "story_48244434"
       ],
-      "points": 205,
+      "points": 209,
       "category": "dev_keyword",
-      "isNew": false,
-      "used": true
-    },
-    {
-      "story_id": "48241172",
-      "title": "Models.dev: open-source database of AI model specs, pricing, and capabilities",
-      "url": "https://github.com/anomalyco/models.dev",
-      "created_at": "2026-05-22T20:26:07Z",
-      "_tags": [
-        "story",
-        "author_maxloh",
-        "story_48241172",
-        "front_page"
-      ],
-      "points": 106,
-      "category": "front_page",
-      "isNew": false,
-      "used": true
+      "isNew": true,
+      "used": false
     },
     {
       "story_id": "48241172",
@@ -74,7 +73,7 @@
         "author_maxloh",
         "story_48241172"
       ],
-      "points": 144,
+      "points": 145,
       "category": "dev_keyword",
       "isNew": false,
       "used": true
@@ -89,7 +88,7 @@
         "author_maxloh",
         "story_48241172"
       ],
-      "points": 144,
+      "points": 146,
       "category": "dev_keyword",
       "isNew": false,
       "used": true
@@ -102,25 +101,9 @@
       "_tags": [
         "story",
         "author_sbulaev",
-        "story_48239786",
-        "front_page"
-      ],
-      "points": 34,
-      "category": "front_page",
-      "isNew": true,
-      "used": false
-    },
-    {
-      "story_id": "48239786",
-      "title": "Domain-Camouflaged Injection Attacks Evade Detection in Multi-Agent LLM Systems",
-      "url": "https://arxiv.org/abs/2605.22001",
-      "created_at": "2026-05-22T18:46:07Z",
-      "_tags": [
-        "story",
-        "author_sbulaev",
         "story_48239786"
       ],
-      "points": 37,
+      "points": 38,
       "category": "ai_keyword",
       "isNew": true,
       "used": false
@@ -135,93 +118,12 @@
         "author_sbulaev",
         "story_48239786"
       ],
-      "points": 37,
+      "points": 38,
       "category": "ai_keyword",
       "isNew": true,
       "used": false
     },
     {
-      "story_id": "48239413",
-      "title": "Open source Kanban desktop app that runs parallel agents on every card",
-      "url": "https://www.kanbots.dev/",
-      "created_at": "2026-05-22T18:17:57Z",
-      "_tags": [
-        "story",
-        "author_vitriapp",
-        "story_48239413",
-        "front_page"
-      ],
-      "points": 173,
-      "category": "front_page",
-      "isNew": true,
-      "used": false
-    },
-    {
-      "story_id": "48239413",
-      "title": "Open source Kanban desktop app that runs parallel agents on every card",
-      "url": "https://www.kanbots.dev/",
-      "created_at": "2026-05-22T18:17:57Z",
-      "_tags": [
-        "story",
-        "author_vitriapp",
-        "story_48239413",
-        "front_page"
-      ],
-      "points": 235,
-      "category": "front_page",
-      "isNew": true,
-      "used": false
-    },
-    {
-      "story_id": "48238568",
-      "title": "1940 Air Terminal Museum Begins Liquidation",
-      "url": "https://www.1940airterminal.org/news/liquidation-of-simulators",
-      "created_at": "2026-05-22T17:05:32Z",
-      "_tags": [
-        "story",
-        "author_weaponeer",
-        "story_48238568",
-        "front_page"
-      ],
-      "points": 90,
-      "category": "front_page",
-      "isNew": true,
-      "used": false
-    },
-    {
-      "story_id": "48236770",
-      "title": "Launch HN: Superset (YC P26) – IDE for the agents era",
-      "url": "https://github.com/superset-sh/superset",
-      "created_at": "2026-05-22T14:53:55Z",
-      "_tags": [
-        "story",
-        "author_avipeltz",
-        "story_48236770",
-        "launch_hn",
-        "front_page"
-      ],
-      "points": 83,
-      "category": "front_page",
-      "isNew": true,
-      "used": false
-    },
-    {
-      "story_id": "48236762",
-      "title": "Show HN: Prisma Next – data contracts, migration graphs, agent DX",
-      "url": "https://github.com/prisma/prisma-next",
-      "created_at": "2026-05-22T14:53:32Z",
-      "_tags": [
-        "story",
-        "author_wmadden",
-        "story_48236762",
-        "show_hn"
-      ],
-      "points": 13,
-      "category": "show_hn",
-      "isNew": true,
-      "used": false
-    },
-    {
       "story_id": "48236762",
       "title": "Show HN: Prisma Next – data contracts, migration graphs, agent DX",
       "url": "https://github.com/prisma/prisma-next",
@@ -284,38 +186,6 @@
       "category": "show_hn",
       "isNew": true,
       "used": false
-    },
-    {
-      "story_id": "48231769",
-      "title": "Show HN: TLS Certificate Management and PKI",
-      "url": "https://news.ycombinator.com/item?id=48231769",
-      "created_at": "2026-05-22T03:54:09Z",
-      "_tags": [
-        "story",
-        "author_zaitanz",
-        "story_48231769",
-        "show_hn"
-      ],
-      "points": 10,
-      "category": "show_hn",
-      "isNew": true,
-      "used": false
-    },
-    {
-      "story_id": "48231575",
-      "title": "Show HN: Spec-Driven Development Workflow for Claude Code",
-      "url": "https://news.ycombinator.com/item?id=48231575",
-      "created_at": "2026-05-22T03:17:38Z",
-      "_tags": [
-        "story",
-        "author_sermakarevich",
-        "story_48231575",
-        "show_hn"
-      ],
-      "points": 18,
-      "category": "show_hn",
-      "isNew": false,
-      "used": true
     },
     {
       "story_id": "48231575",
@@ -360,7 +230,7 @@
         "story_48230104",
         "ask_hn"
       ],
-      "points": 115,
+      "points": 116,
       "category": "dev_keyword",
       "isNew": true,
       "used": false
@@ -414,54 +284,6 @@
       "used": false
     },
     {
-      "story_id": "48229518",
-      "title": "Show HN: Smithereen – an early-Facebook-style Fediverse server",
-      "url": "https://smithereen.software",
-      "created_at": "2026-05-21T22:18:25Z",
-      "_tags": [
-        "story",
-        "author_grishka",
-        "story_48229518",
-        "show_hn"
-      ],
-      "points": 13,
-      "category": "dev_keyword",
-      "isNew": true,
-      "used": false
-    },
-    {
-      "story_id": "48229319",
-      "title": "The memory shortage is causing a repricing of consumer electronics",
-      "url": "https://davidoks.blog/p/ai-is-killing-the-cheap-smartphone",
-      "created_at": "2026-05-21T21:55:56Z",
-      "_tags": [
-        "story",
-        "author_d0ks",
-        "story_48229319",
-        "front_page"
-      ],
-      "points": 480,
-      "category": "front_page",
-      "isNew": true,
-      "used": false
-    },
-    {
-      "story_id": "48226107",
-      "title": "Ask HN: Failing interviews for mid-level SWE in UK, advice please",
-      "url": "https://news.ycombinator.com/item?id=48226107",
-      "created_at": "2026-05-21T17:19:03Z",
-      "_tags": [
-        "story",
-        "author_mjb8086",
-        "story_48226107",
-        "ask_hn"
-      ],
-      "points": 15,
-      "category": "dev_keyword",
-      "isNew": true,
-      "used": false
-    },
-    {
       "story_id": "48226107",
       "title": "Ask HN: Failing interviews for mid-level SWE in UK, advice please",
       "url": "https://news.ycombinator.com/item?id=48226107",
@@ -490,22 +312,6 @@
       ],
       "points": 16,
       "category": "dev_keyword",
-      "isNew": true,
-      "used": false
-    },
-    {
-      "story_id": "48225596",
-      "title": "Show HN: Agent.email – sign up via curl, claim with a human OTP",
-      "url": "https://news.ycombinator.com/item?id=48225596",
-      "created_at": "2026-05-21T16:42:34Z",
-      "_tags": [
-        "story",
-        "author_adisingh13",
-        "story_48225596",
-        "show_hn"
-      ],
-      "points": 85,
-      "category": "show_hn",
       "isNew": true,
       "used": false
     },
@@ -574,22 +380,6 @@
       "used": false
     },
     {
-      "story_id": "48225040",
-      "title": "Launch HN: Runtime (YC P26) – Sandboxed coding agents for everyone on a team",
-      "url": "https://www.runtm.com/",
-      "created_at": "2026-05-21T16:07:13Z",
-      "_tags": [
-        "story",
-        "author_gustrigos",
-        "story_48225040",
-        "launch_hn"
-      ],
-      "points": 100,
-      "category": "ai_keyword",
-      "isNew": true,
-      "used": false
-    },
-    {
       "story_id": "48224184",
       "title": "Show HN: Let agents run any analysis with Mixpanel data, no UI required",
       "url": "https://docs.mixpanel.com/docs/mixpanel-headless",
@@ -617,54 +407,6 @@
         "show_hn"
       ],
       "points": 21,
-      "category": "show_hn",
-      "isNew": true,
-      "used": false
-    },
-    {
-      "story_id": "48224184",
-      "title": "Show HN: Let agents run any analysis with Mixpanel data, no UI required",
-      "url": "https://docs.mixpanel.com/docs/mixpanel-headless",
-      "created_at": "2026-05-21T15:14:33Z",
-      "_tags": [
-        "story",
-        "author_ttchen2",
-        "story_48224184",
-        "show_hn"
-      ],
-      "points": 21,
-      "category": "show_hn",
-      "isNew": true,
-      "used": false
-    },
-    {
-      "story_id": "48221896",
-      "title": "Show HN: I Dedicated 4 Years to Mastering Offline Password Cracking",
-      "url": "https://news.ycombinator.com/item?id=48221896",
-      "created_at": "2026-05-21T12:56:37Z",
-      "_tags": [
-        "story",
-        "author_bojta-lepenye",
-        "story_48221896",
-        "show_hn"
-      ],
-      "points": 257,
-      "category": "dev_keyword",
-      "isNew": true,
-      "used": false
-    },
-    {
-      "story_id": "48221805",
-      "title": "Show HN: I Made a Claude Skill for Spec-Driven Development (SDD)",
-      "url": "https://github.com/FredAntB/Spec-Driven-Development",
-      "created_at": "2026-05-21T12:49:07Z",
-      "_tags": [
-        "story",
-        "author_NTRIXLM",
-        "story_48221805",
-        "show_hn"
-      ],
-      "points": 32,
       "category": "show_hn",
       "isNew": true,
       "used": false

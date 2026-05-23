@@ -134,9 +134,16 @@ def _fill_title(cover, series_name):
         changed = True
     if _is_hole(big2) and candidates:
         raw = _trim(candidates[0].get("title", ""), 24)
-        if raw != big2:  # 避免把一样的截断再写一遍
+        # 如果候选标题也是纯英文，截断后还是英文，不如用默认中文
+        if not re.search(r'[\u4e00-\u9fff]', raw):
+            title["big2"] = {"brief": "AI 今日看点", "trend": "今日趋势观察", "tool": "开源工具推荐"}.get(series_name, "今日关注")
+        elif raw != big2:
             title["big2"] = raw
-            changed = True
+        changed = True
+    elif _is_hole(big2):
+        # 纯英文占位符但无候选 — 写默认中文标题
+        title["big2"] = {"brief": "AI 今日看点", "trend": "今日趋势观察", "tool": "开源工具推荐"}.get(series_name, "今日关注")
+        changed = True
     elif not re.search(r'[\u4e00-\u9fff]', big2) and len(big2) < 30 and candidates:
         # curate.py 截断到 20 字但不加 "…"，补成完整或更好的标题
         raw_title = candidates[0].get("title", "")
@@ -160,7 +167,12 @@ def _fill_subtitle(cover):
         if text:
             lines = [l.strip() for l in text.split("\n") if l.strip() and len(l.strip()) > 20]
             if lines:
-                cover["subtitle"] = lines[0][:80]
+                sub = lines[0][:80]
+                # 如果抓到的还是英文，用默认中文副标题
+                if not re.search(r'[\u4e00-\u9fff]', sub):
+                    cover["subtitle"] = "今日 AI / Agent 领域值得关注的重要动态，一文速览。"
+                else:
+                    cover["subtitle"] = sub
                 return True
     return False
 
@@ -215,22 +227,31 @@ def _fill_p3(s, series_name):
         changed = True
 
     if p3_type == "steps":
-        for item in p3.get("items", []):
+        candidates = p3.get("_candidates", [])
+        # 提取 repo 信息
+        repo_url = ""
+        for c in candidates:
+            u = c.get("url", "")
+            if "github.com" in u:
+                repo_url = u
+                break
+        if not repo_url and candidates:
+            repo_url = candidates[0].get("url", "")
+
+        for i, item in enumerate(p3.get("items", [])):
             code = item.get("code", "")
             if _is_hole(code) or "待填" in code:
-                candidates = p3.get("_candidates", [])
-                # 优先找 GitHub URL
-                repo_url = ""
-                for c in candidates:
-                    u = c.get("url", "")
-                    if "github.com" in u:
-                        repo_url = u
-                        break
-                if not repo_url and candidates:
-                    repo_url = candidates[0].get("url", "")
                 if repo_url and "github.com" in repo_url:
                     repo = "/".join(repo_url.replace("https://github.com/", "").split("/")[:2])
-                    item["code"] = f"git clone https://github.com/{repo}"
+                    repo_name = repo.split("/")[-1]
+                    if i == 0:
+                        item["code"] = f"git clone https://github.com/{repo}"
+                    elif i == 1:
+                        item["code"] = f"cd {repo_name} && ls"
+                    elif i == 2:
+                        item["code"] = f"cat {repo_name}/README.md"
+                    else:
+                        item["code"] = f"git clone https://github.com/{repo}"
                 elif repo_url:
                     item["code"] = f"访问 {repo_url.split('//')[-1][:30]}"
                 else:

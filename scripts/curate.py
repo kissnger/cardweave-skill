@@ -11,9 +11,8 @@ Cardweave 内容出库 — curate.py
 
 用法：
   cd cardweave-skill/
-  python3 scripts/curate.py                            # 用当天 db 数据出库
-  python3 scripts/curate.py --date 2026-05-22          # 指定日期
-  python3 scripts/curate.py --review                    # 只看候选，不写入
+  python3 scripts/curate.py                            # 读 template.json 的日期
+  python3 scripts/curate.py --review                   # 只看候选，不写入
 """
 import json, sys
 from urllib.request import urlopen, Request
@@ -299,6 +298,13 @@ def build_series(series_name, rules, db, date_str):
     all_candidates = []
     for src_id in src_ids:
         all_candidates.extend(get_entries(db, date_str=date_str, category=src_id))
+    # 跨源去重：相同 story_id 只保留最高分
+    seen = {}
+    for c in all_candidates:
+        sid = c["story_id"]
+        if sid not in seen or c.get("points", 0) > seen[sid].get("points", 0):
+            seen[sid] = c
+    all_candidates = list(seen.values())
     # 先按 isNew 排，再按分数或时间排
     sort_by = r.get("cover", {}).get("select", {}).get("sort_by", "points")
     if sort_by == "created_at":
@@ -385,35 +391,54 @@ def mark_used(db, ids):
 
 def main():
     args = sys.argv[1:]
-    date_str = today
     review_only = False
 
-    for i, a in enumerate(args):
-        if a == "--date" and i + 1 < len(args):
-            date_str = args[i + 1]
+    for a in args:
         if a == "--review":
             review_only = True
 
     rules = load_rules()
     db = load_db()
 
-    # 检查当天是否有数据，没有则自动退到最新可用日期
+    # 日期来源：template.json（由 setup.py 写入），不再接收 --date 参数
+    date_str = today
+    if TEMPLATE_FILE.exists():
+        try:
+            existing = json.load(open(TEMPLATE_FILE))
+            ts = existing.get("_meta", {}).get("date")
+            if ts:
+                date_str = ts
+        except (json.JSONDecodeError, KeyError):
+            pass
+
+    # 检查当天数据是否足够：少于 5 条或最高分低于 50 则自动退
     day_entries = get_entries(db, date_str=date_str)
-    if not day_entries:
-        dates = sorted({e["created_at"][:10] for e in db.get("entries", [])}, reverse=True)[:5]
-        if not dates:
+    max_pts = max((e.get("points", 0) for e in day_entries), default=0)
+    needs_fallback = len(day_entries) < 5 or max_pts < 50
+
+    if needs_fallback:
+        dates = sorted({e["created_at"][:10] for e in db.get("entries", [])}, reverse=True)
+        dates = [d for d in dates if d != date_str][:10]
+        if not dates and not day_entries:
             print(f"[错误] 数据库中没有任何数据", file=sys.stderr)
             print(f"  先跑: python3 scripts/search_all.py", file=sys.stderr)
             sys.exit(1)
-        fallback = dates[0]
-        if date_str == today:
-            print(f"  [提示] 今天({today})暂无数据，自动使用最新日期: {fallback}")
-            date_str = fallback
-            day_entries = get_entries(db, date_str=date_str)
+        # 从最近日期找有足够数据的
+        for fallback in dates:
+            fb_entries = get_entries(db, date_str=fallback)
+            fb_max = max((e.get("points", 0) for e in fb_entries), default=0)
+            if len(fb_entries) >= 5 and fb_max >= 50:
+                print(f"  [提示] {date_str} 数据不足({len(day_entries)}条,最高{max_pts}分)，使用 {fallback} 的数据")
+                date_str = fallback
+                day_entries = fb_entries
+                break
         else:
-            print(f"[错误] cardweave_db.json 中没有 {date_str} 的数据", file=sys.stderr)
-            print(f"  可用日期: {', '.join(dates)}", file=sys.stderr)
-            sys.exit(1)
+            # 所有日期都不满足阈值，退到最近日期
+            if dates:
+                fallback = dates[0]
+                print(f"  [提示] {date_str} 数据不足，使用 {fallback} 的数据（所有日期均低于阈值）")
+                date_str = fallback
+                day_entries = get_entries(db, date_str=date_str)
 
     print(f"\n{'='*50}")
     print(f"  Cardweave 内容出库 — {date_str}  |  库中共 {len(db['entries'])} 条, 当天 {len(day_entries)} 条")
