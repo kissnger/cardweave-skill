@@ -1,0 +1,166 @@
+# =========================================================
+# Cardweave 内容策展规则
+# 定义：搜索什么 → 怎么筛选 → 怎么填入 template.json
+# =========================================================
+
+# ── 搜索配置 ──────────────────────────────────────────────
+search:
+  sources:
+    - id: show_hn
+      description: "Show HN — AI/Agent/Dev 开源项目"
+      type: show_hn
+      queries:
+        - "AI"
+        - "agent"
+      min_points: 10
+      count: 10
+      days: 2
+      sort: by_date
+
+    - id: front_page
+      description: "首页热门 — AI/Agent/Dev 焦点"
+      type: front_page
+      queries:
+        - "AI"
+        - "agent"
+        - "developer"
+      min_points: 5
+      count: 10
+      days: 2
+      sort: by_date
+
+    - id: ai_keyword
+      description: "AI 关键词 — 补充 AI/Agent 行业深度内容"
+      type: search
+      queries:
+        - "AI training"
+        - "agent LLM"
+        - "compute model"
+      min_points: 20
+      count: 10
+      days: 2
+      sort: by_popularity
+
+    - id: dev_keyword
+      description: "开发关键词 — 补充开发/工具/AI 跨领域内容"
+      type: search
+      queries:
+        - "AI agent"
+        - "developer tool"
+        - "database"
+      min_points: 10
+      count: 10
+      days: 2
+      sort: by_popularity
+
+
+# ── 策展规则 ──────────────────────────────────────────────
+# 每个卡片系列（trend / tool / brief）定义：
+#   源数据 → 筛选条件 → 填入的位置 → 布局模板
+# ──────────────────────────────────────────────────────────
+curation:
+
+  # ── 商业趋势 ──────────────────────────
+  # p2.type: data-list (大号数字卡片)
+  # 选一条当天最有数据含量的行业新闻
+  trend:
+    sources: [front_page, ai_keyword, dev_keyword]
+    cover:
+      select:
+        strategy: auto_score
+        min_points: 200
+        max_candidates: 3
+      layout:
+        tag: "AI 趋势 · 关键信号"
+        title: "三段式：第一行 + 大字号行 + 渐变高亮"
+        subtitle: "背景 + 分析师判断"
+        footer: "日期 · 趋势观察"
+    p2:
+      select:
+        strategy: auto_score
+        min_points: 200
+        max_items: 3
+      layout: "data-list"
+      items:
+        num_key: "数据数字（$X / X%）"
+        title_key: "短标"
+        desc_key: "一句话说明"
+      source_footer: true
+    p3:
+      select:
+        strategy: auto_score
+        max_items: 2
+      layout: "body-list"
+      closing: "必填 — 传播性金句"
+
+  # ── 工具教程 ──────────────────────────
+  # p2.type: pain-list (痛点 + 解决方案)
+  # 固定 1 个好项目（Show HN 优先）
+  # 避免用 front_page 新闻冒充工具
+  tool:
+    sources: [show_hn, dev_keyword]
+    cover:
+      select:
+        strategy: auto_score
+        min_points: 2
+        max_candidates: 1
+        require_url: true
+        priority_tags:
+          - "show_hn"
+      layout:
+        tag: "开源新工具 · 分类标签"
+        title: "工具名 + 一句话定位"
+        subtitle: "作者 · 核心亮点"
+        footer: "日期 · 效率实践"
+    p2:
+      select:
+        strategy: auto_score
+        min_points: 2
+        max_items: 1
+        require_url: true
+      layout: "pain-list"
+      items:
+        problem_key: "工具解决什么问题"
+        solution_key: "怎么用的 + ↑分数 · 链接"
+    p3:
+      select:
+        strategy: manual
+      layout: "steps"
+      items:
+        code_key: "安装/使用命令"
+      footer: "作者 · 协议"
+
+  # ── 每日简讯 ──────────────────────────
+  # p2.type: news-list (①②③ 编号)
+  # 从首页热门 + AI 关键词里筛 3 条
+  brief:
+    sources: [front_page, ai_keyword]
+    cover:
+      select:
+        strategy: auto_score
+        min_points: 30
+        sort_by: created_at
+        max_candidates: 5
+      layout:
+        tag: "AI & Agent 简讯 · 日期"
+        title: "「今日 值得关注的 三件事」"
+        subtitle: "3 条标题，用 · 分隔"
+        footer: "3分钟了解今天 · 每日简讯"
+    p2:
+      select:
+        strategy: auto_score
+        min_points: 30
+        sort_by: created_at
+        max_items: 3
+      layout: "news-list"
+      items:
+        title_key: "标题"
+        desc_key: "一句话说明为什么重要"
+    p3:
+      select:
+        strategy: auto_score
+        max_items: 2
+      layout: "body-list"
+      closing: "必填 — 串联三条的价值判断"
+
+

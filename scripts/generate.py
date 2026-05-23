@@ -4,12 +4,15 @@
 
 用法：
   cd cardweave-skill/
-  python3 scripts/generate.py [data.json]     # 只生成 HTML
-  python3 scripts/generate.py [data.json] --screenshot   # + PNG 截图
+  python3 scripts/generate.py                                    # 生成 HTML
+  python3 scripts/generate.py [data.json]                       # 用指定数据源
+  python3 scripts/generate.py -o /path/to/output                # 输出到指定目录
+  python3 scripts/generate.py --screenshot                      # + PNG 截图
 
 参数：
-  data.json  可选，数据源路径。省略则用 templates/template.json
-  --screenshot  生成后自动截图（需 Playwright + Chromium）
+  data.json          可选，数据源路径。省略则用 templates/template.json
+  -o, --output-dir   输出目录。省略则在 skill 根目录下按日期新建文件夹
+  --screenshot       生成后自动截图（需 Playwright + Chromium）
 """
 import json, os, sys, re
 from pathlib import Path
@@ -18,13 +21,24 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent  # repo root
 
 # ── 1. 解析参数 ──────────────────────────────────────────────
-args = [a for a in sys.argv[1:] if not a.startswith("--")]
-flags = [a for a in sys.argv[1:] if a.startswith("--")]
+data_path = None
+output_dir = None
+screenshot = False
 
-if args:
-    DATA_FILE = Path(args[0])
-else:
-    DATA_FILE = ROOT / "templates" / "template.json"
+i = 1
+while i < len(sys.argv):
+    a = sys.argv[i]
+    if a == "--screenshot":
+        screenshot = True
+    elif a in ("--output-dir", "-o") and i + 1 < len(sys.argv):
+        output_dir = Path(sys.argv[i + 1])
+        i += 1
+    elif not a.startswith("--") and data_path is None:
+        data_path = Path(a)
+    i += 1
+
+DATA_FILE = data_path or (ROOT / "templates" / "template.json")
+flags = ["--screenshot"] if screenshot else []
 
 if not DATA_FILE.exists():
     print(f"[错误] 找不到数据源文件: {DATA_FILE}", file=sys.stderr)
@@ -33,13 +47,32 @@ if not DATA_FILE.exists():
 with open(DATA_FILE) as f:
     data = json.load(f)
 
+# ── 待填检查 ──────────────────────────────────────────
+def _check_placeholder(obj, path=""):
+    if isinstance(obj, str) and "待填" in obj:
+        print(f"[错误] template.json 中存在\"待填\"占位符 ({path})", file=sys.stderr)
+        print(f"  位置: {path} = \"{obj[:50]}\"", file=sys.stderr)
+        return True
+    if isinstance(obj, dict):
+        return any(_check_placeholder(v, f"{path}.{k}") for k, v in obj.items())
+    if isinstance(obj, list):
+        return any(_check_placeholder(v, f"{path}[{i}]") for i, v in enumerate(obj))
+    return False
+
+if _check_placeholder(data):
+    print("", file=sys.stderr)
+    print("  先用 Tavily 搜原文写中文，填完 template.json 再 generate。", file=sys.stderr)
+    sys.exit(1)
+
 date_str = data.get("_meta", {}).get("date")
 if not date_str or date_str == "unknown":
     from datetime import datetime
     date_str = datetime.now().strftime("%Y-%m-%d")
     print(f"[提示] 数据源未设置日期，使用今日: {date_str}")
 
-OUT_DIR = ROOT / date_str
+OUT_DIR = (output_dir / date_str) if output_dir else (ROOT / date_str)
+if output_dir:
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
 for slug in ("trend", "tool", "brief"):
     (OUT_DIR / slug).mkdir(parents=True, exist_ok=True)
 
@@ -65,7 +98,11 @@ def write(slug, filename, body):
 </body></html>
 """
     path.write_text(page)
-    print(f"  ✓ {path.relative_to(ROOT)}")
+    try:
+        rel = path.relative_to(ROOT)
+        print(f"  ✓ {rel}")
+    except ValueError:
+        print(f"  ✓ {path}")
 
 
 # ── 4. 生成全部 9 页 ─────────────────────────────────────────
@@ -173,7 +210,7 @@ for slug in ("trend", "tool", "brief"):
 </div>
 </div>""")
 
-print(f"\n✅ 已生成 9 页 HTML → {OUT_DIR.relative_to(ROOT)}/")
+print(f"\n✅ 已生成 9 页 HTML → {OUT_DIR}/")
 
 
 # ── 5. 截图（可选） ──────────────────────────────────────────
@@ -220,4 +257,4 @@ if "--screenshot" in flags:
 
         browser.close()
 
-    print(f"\n✅ 9 张 PNG → {SCR_OUT.relative_to(ROOT)}/")
+    print(f"\n✅ 9 张 PNG → {SCR_OUT}/")

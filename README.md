@@ -1,30 +1,51 @@
 # Cardweave — 每日卡片海报生成器
 
-一键生成 9 张社交媒体卡片海报，三类内容 × 三页。
+一键生成 9 张 AI/Agent 新闻卡片海报（3 类 × 3 页），适配社交媒体分享和公众号配图。
 
-## 快速使用
-
-```bash
-python3 scripts/generate.py          # 用默认模板生成 HTML
-python3 scripts/generate.py --screenshot   # 生成 HTML + PNG 截图
-```
-
-打开 `{日期}/trend/cover.html` 查看效果。
-
-## 一次性的
+## 安装
 
 ```bash
-pip3 install --break-system-packages playwright
-playwright install chromium
+git clone https://github.com/kissnger/cardweave-skill
+cd cardweave-skill/
 ```
+
+无需 API Key。所有数据来自 Algolia HN Search 免费 API。
+
+## 一键运行
+
+```bash
+python3 scripts/search_all.py     # 搜索 → 入库
+python3 scripts/curate.py --date $(date +%Y-%m-%d)   # 出库 → template.json
+python3 scripts/editorial.py      # 自动抓原文写中文
+python3 scripts/generate.py       # 生成 9 页 HTML
+```
+
+打开 `{日期}/trend/cover.html` 看效果。
+
+## 可选：PNG 截图
+
+需要 Playwright + Chromium：
+
+```bash
+npm install -g playwright
+npx playwright install chromium
+python3 scripts/generate.py --screenshot
+```
+
+截图输出到 `{日期}/screenshots/`。
 
 ## 项目结构
 
 ```
-assets/base.html        # 设计母版（CSS）
-scripts/generate.py     # 生成脚本
-templates/template.json # 数据源模板
-references/             # 字段参考文档
+assets/base.html        # CSS 母版（颜色变量体系）
+scripts/                # pipeline 脚本
+templates/template.json # 数据源（pipeline 目标文件）
+references/             # 字段文档 + 流程图
+rules/curation.yaml     # 策展规则（搜索源 · 筛选 · 布局）
 ```
 
-详见 [SKILL.md](SKILL.md) 完整文档。
+完整文档见 [SKILL.md](SKILL.md)（给 AI Agent 读的详细操作手册）。
+
+## 许可证
+
+MIT

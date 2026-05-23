@@ -4,44 +4,227 @@
     "date": "2026-05-22",
     "description": "每日卡片海报数据源"
   },
+  "brief": {
+    "name": "每日简讯",
+    "name_en": "Daily Brief",
+    "brand": {
+      "primary": "#F59E0B",
+      "gradient": [
+        "#FCD34D",
+        "#F59E0B",
+        "#D97706"
+      ],
+      "bg_word": "BRIEF"
+    },
+    "cover": {
+      "_candidates": [
+        {
+          "story_id": "48239786",
+          "title": "Domain-Camouflaged Injection Attacks Evade Detection in Multi-Agent LLM Systems",
+          "url": "https://arxiv.org/abs/2605.22001",
+          "created_at": "2026-05-22T18:46:07Z",
+          "_tags": [
+            "story",
+            "author_sbulaev",
+            "story_48239786",
+            "front_page"
+          ],
+          "points": 34,
+          "category": "front_page",
+          "isNew": true,
+          "used": false
+        },
+        {
+          "story_id": "48239786",
+          "title": "Domain-Camouflaged Injection Attacks Evade Detection in Multi-Agent LLM Systems",
+          "url": "https://arxiv.org/abs/2605.22001",
+          "created_at": "2026-05-22T18:46:07Z",
+          "_tags": [
+            "story",
+            "author_sbulaev",
+            "story_48239786"
+          ],
+          "points": 37,
+          "category": "ai_keyword",
+          "isNew": true,
+          "used": false
+        },
+        {
+          "story_id": "48239786",
+          "title": "Domain-Camouflaged Injection Attacks Evade Detection in Multi-Agent LLM Systems",
+          "url": "https://arxiv.org/abs/2605.22001",
+          "created_at": "2026-05-22T18:46:07Z",
+          "_tags": [
+            "story",
+            "author_sbulaev",
+            "story_48239786"
+          ],
+          "points": 37,
+          "category": "ai_keyword",
+          "isNew": true,
+          "used": false
+        },
+        {
+          "story_id": "48239413",
+          "title": "Open source Kanban desktop app that runs parallel agents on every card",
+          "url": "https://www.kanbots.dev/",
+          "created_at": "2026-05-22T18:17:57Z",
+          "_tags": [
+            "story",
+            "author_vitriapp",
+            "story_48239413",
+            "front_page"
+          ],
+          "points": 173,
+          "category": "front_page",
+          "isNew": true,
+          "used": false
+        },
+        {
+          "story_id": "48239413",
+          "title": "Open source Kanban desktop app that runs parallel agents on every card",
+          "url": "https://www.kanbots.dev/",
+          "created_at": "2026-05-22T18:17:57Z",
+          "_tags": [
+            "story",
+            "author_vitriapp",
+            "story_48239413",
+            "front_page"
+          ],
+          "points": 235,
+          "category": "front_page",
+          "isNew": true,
+          "used": false
+        }
+      ],
+      "tag": "AI & Agent 简讯 · 5月22日",
+      "title": {
+        "pre": "三个信号",
+        "big2": "看清今天的 AI 版图",
+        "highlight": "开源模型库 · 安全攻防 · Agent 看板"
+      },
+      "subtitle": "Models.dev 开源 AI 模型数据库上线 · 多 Agent 系统面临新型注入攻击 · KanBots 重新定义 Agent 协作",
+      "footer": "2026-05-22 · 每日简讯"
+    },
+    "p2": {
+      "_candidates": [],
+      "tag": "今日要闻",
+      "title": "三条动态 值得关注",
+      "type": "news-list",
+      "items": [
+        {
+          "title": "Models.dev 开源 AI 模型数据库",
+          "desc": "社区驱动的 AI 模型规格、定价和能力数据库。涵盖 Anthropic、OpenAI、Google 等主流厂商。",
+          "_url": "https://github.com/anomalyco/models.dev"
+        },
+        {
+          "title": "域伪装注入攻击突破多 Agent 防线",
+          "desc": "新研究揭示域伪装注入攻击可绕过多 Agent LLM 系统的检测机制。",
+          "_url": "https://arxiv.org/abs/2605.22001"
+        },
+        {
+          "title": "KanBots：每张卡片跑一个 Agent",
+          "desc": "开源桌面看板，每张卡片调度 Claude Code 或 Codex 在独立工作目录运行。HN 首页 235 分。",
+          "_url": "https://www.kanbots.dev/"
+        }
+      ]
+    },
+    "p3": {
+      "tag": "行业观察",
+      "title": "三条信号 一个趋势",
+      "type": "body-list",
+      "items": [
+        {
+          "label": "重要趋势",
+          "text": "AI 生态正在快速成熟——模型信息透明化、安全防护升级、开发工具链重构，三个信号指向同一方向：AI 从实验走向工程化"
+        },
+        {
+          "label": "关注焦点",
+          "text": "「看板即 Agent 调度器」理念值得跟进——它可能是 AI 辅助开发从聊天窗口进化到工作流系统的关键一步"
+        }
+      ],
+      "closing": "今天的三个信号：开源生态加速成熟，安全战场悄然升级，开发工具正在被重新定义。"
+    }
+  },
   "trend": {
     "name": "商业趋势",
     "name_en": "Business Trend",
     "brand": {
       "primary": "#A855F7",
-      "gradient": ["#D8B4FE", "#A855F7", "#7C3AED"],
+      "gradient": [
+        "#D8B4FE",
+        "#A855F7",
+        "#7C3AED"
+      ],
       "bg_word": "SHIFT"
     },
     "cover": {
-      "tag": "基础设施 · 算力商品化",
+      "_candidates": [
+        {
+          "story_id": "48239413",
+          "title": "Open source Kanban desktop app that runs parallel agents on every card",
+          "url": "https://www.kanbots.dev/",
+          "created_at": "2026-05-22T18:17:57Z",
+          "_tags": [
+            "story",
+            "author_vitriapp",
+            "story_48239413",
+            "front_page"
+          ],
+          "points": 235,
+          "category": "front_page",
+          "isNew": true,
+          "used": false
+        }
+      ],
+      "tag": "AI 趋势 · 关键信号",
       "title": {
-        "pre": "AI 算力",
-        "big2": "成为独立资产",
-        "highlight": "$45B 竞对交易"
+        "pre": "KanBots 让 AI Agent",
+        "big2": "从聊天变成看板系统",
+        "highlight": "每张卡片并行运行 Agent"
       },
-      "subtitle": "SpaceX IPO 文件披露：xAI 以 $1.25B/月向竞争对手 Anthropic 出售 Colossus 算力集群\n分析师：算力正在变成可交易的独立资产类别，不再捆绑模型",
-      "footer": "2026年5月 · 趋势观察"
+      "subtitle": "KanBots 是一个开源看板应用，每张卡片可调度 Claude Code 或 Codex 在独立工作目录中并行运行 Agent。支持自动驾驶模式。",
+      "footer": "2026-05-22 · 趋势观察"
     },
     "p2": {
-      "tag": "交易数据",
-      "title": "<span class=\"hl\">算力交易</span> 关键数字",
+      "_candidates": [],
+      "tag": "关键数据",
+      "title": "KanBots 核心指标",
       "type": "data-list",
       "items": [
-        { "num": "$1.25B", "title": "月交易额", "desc": "Anthropic 以每月 12.5 亿美元购买 xAI 的 Colossus 集群算力，合同持续到 2029 年 5 月" },
-        { "num": "$45B", "title": "合同总估值", "desc": "这是首个公开的「算力即资产」定价标杆——比多数 SaaS 公司估值还高" },
-        { "num": "100%", "title": "全新资产类别", "desc": "分析师：算力从内部成本中心变为可交易的独立战略资产，与模型解耦" }
+        {
+          "num": "↑235",
+          "title": "HN 热度",
+          "desc": "Hacker News 首页 235 分"
+        },
+        {
+          "num": "4",
+          "title": "并行 Agent",
+          "desc": "最多 4 个 Agent 同时在独立分支工作"
+        },
+        {
+          "num": "MIT",
+          "title": "完全开源",
+          "desc": "免费使用，本地运行，零遥测"
+        }
       ],
-      "source": "SpaceX S-1 文件 · Network World · Dell'Oro Group · Futurum Group"
+      "source": "kanbots.dev"
     },
     "p3": {
-      "tag": "行业判断",
-      "title": "算力 <span class=\"hl\">去捆绑化</span>",
+      "tag": "行业观察",
+      "title": "关键洞察",
       "type": "body-list",
       "items": [
-        { "label": "范式切换", "text": "xAI 向竞争对手出售算力，标志着 AI 基础设施从「垂直整合」走向「水平交易」。算力不再只是模型公司的内部工具，而是可定价、可交易、可分割的独立商品。" },
-        { "label": "对企业的意义", "text": "企业采购 AI 算力的来源将从「选云厂商=选模型」变为多供应商组合。CIO 需要重新思考：工作负载跑在哪、成本多少、利用率如何——不再只是云采购决策。" }
+        {
+          "label": "趋势信号 1",
+          "text": "Agent 协作从串行转向并行——KanBots 让多个 Agent 在不同工作目录各自为战"
+        },
+        {
+          "label": "趋势信号 2",
+          "text": "「看板即界面」正在成为 Agent 时代的新范式——Agent 调度变得可视化"
+        }
       ],
-      "closing": "当竞争对手之间开始卖算力，算力本身就成了生意。"
+      "closing": "Agent 的下一站不是更强的单兵，而是更好的协作系统。"
     }
   },
   "tool": {
@@ -49,78 +232,119 @@
     "name_en": "Tool Tutorial",
     "brand": {
       "primary": "#34D399",
-      "gradient": ["#6EE7B7", "#34D399", "#059669"],
+      "gradient": [
+        "#6EE7B7",
+        "#34D399",
+        "#059669"
+      ],
       "bg_word": "TOOL"
     },
     "cover": {
-      "tag": "开源新工具 · 数据查询",
+      "_candidates": [
+        {
+          "story_id": "48241172",
+          "title": "Models.dev: open-source database of AI model specs, pricing, and capabilities",
+          "url": "https://github.com/anomalyco/models.dev",
+          "created_at": "2026-05-22T20:26:07Z",
+          "_tags": [
+            "story",
+            "author_maxloh",
+            "story_48241172"
+          ],
+          "points": 144,
+          "category": "dev_keyword",
+          "isNew": true,
+          "used": false
+        }
+      ],
+      "tag": "开源新工具 · 模型数据库",
       "title": {
-        "pre": "对话式 SQL",
-        "big2": "Datasette Agent",
-        "highlight": "用自然语言问数据库"
+        "pre": "Models.dev",
+        "big2": "开源 AI 模型大全",
+        "highlight": "查模型 · 比价格 · 看能力"
       },
-      "subtitle": "Simon Willison 发布 Datasette Agent：用自然语言查询 SQLite 数据\n支持 Gemini / 本地模型 · 插件可生成图表 · 完全开源",
-      "footer": "2026年5月 · 效率实践"
+      "subtitle": "社区驱动的 AI 模型数据库，覆盖数百个模型规格、定价和能力信息。SST 团队出品。",
+      "footer": "2026-05-22 · 效率实践"
     },
     "p2": {
+      "_selected_ids": [
+        "48241172"
+      ],
       "tag": "传统痛点",
-      "title": "<span class=\"hl\">查数据</span> 为什么这么难？",
+      "title": "为什么需要这个工具？",
       "type": "pain-list",
       "items": [
-        { "problem": "老板要一个数字，你要写三条 JOIN", "solution": "非技术人员想查数据必须找工程师写 SQL，沟通成本高、排期慢、反复改，一个简单问题拖半天。" },
-        { "problem": "表结构记不住，全靠猜", "solution": "字段名模糊、关联关系复杂，每次写查询都要先翻 schema 文档或者 EXPLAIN 看表结构。" },
-        { "problem": "分析结果还要做图表", "solution": "查到数据只是第一步，还要复制到 Excel/Google Sheets 画图。Datasette Agent 的 charts 插件一步到位。" }
+        {
+          "problem": "AI 模型信息碎片化，比价靠人工",
+          "solution": "Models.dev 把各厂商的模型规格、定价、能力统一到 TOML 数据库，API 查询秒出"
+        }
       ]
     },
     "p3": {
+      "_candidates": [
+        {
+          "story_id": "48241172",
+          "title": "Models.dev: open-source database of AI model specs, pricing, and capabilities",
+          "url": "https://github.com/anomalyco/models.dev",
+          "created_at": "2026-05-22T20:26:07Z",
+          "_tags": [
+            "story",
+            "author_maxloh",
+            "story_48241172"
+          ],
+          "points": 144,
+          "category": "dev_keyword",
+          "isNew": true,
+          "used": false
+        },
+        {
+          "story_id": "48231575",
+          "title": "Show HN: Spec-Driven Development Workflow for Claude Code",
+          "url": "https://news.ycombinator.com/item?id=48231575",
+          "created_at": "2026-05-22T03:17:38Z",
+          "_tags": [
+            "story",
+            "author_sermakarevich",
+            "story_48231575",
+            "show_hn"
+          ],
+          "points": 19,
+          "category": "show_hn",
+          "isNew": true,
+          "used": false
+        },
+        {
+          "story_id": "48231575",
+          "title": "Show HN: Spec-Driven Development Workflow for Claude Code",
+          "url": "https://news.ycombinator.com/item?id=48231575",
+          "created_at": "2026-05-22T03:17:38Z",
+          "_tags": [
+            "story",
+            "author_sermakarevich",
+            "story_48231575",
+            "show_hn"
+          ],
+          "points": 19,
+          "category": "show_hn",
+          "isNew": true,
+          "used": false
+        }
+      ],
       "tag": "快速上手",
-      "title": "<span class=\"hl\">三步</span> 用起来",
+      "title": "三步 用起来",
       "type": "steps",
       "items": [
-        { "code": "pip install datasette-agent datasette-agent-charts" },
-        { "code": "datasette-agent mydatabase.db \\\n  --model gemini-3.1-flash-lite" },
-        { "code": "用自然语言问「上月销量最高的\n品类是什么，画个柱状图」" }
+        {
+          "code": "git clone https://github.com/anomalyco/models.dev"
+        },
+        {
+          "code": "ls providers/  # 查看已收录厂商"
+        },
+        {
+          "code": "cat providers/anthropic/models/claude-sonnet-4.toml"
+        }
       ],
-      "footer": "Simon Willison · Datasette Agent · 开源 Apache 2.0"
-    }
-  },
-  "brief": {
-    "name": "每日简讯",
-    "name_en": "Daily Brief",
-    "brand": {
-      "primary": "#F59E0B",
-      "gradient": ["#FCD34D", "#F59E0B", "#D97706"],
-      "bg_word": "BRIEF"
-    },
-    "cover": {
-      "tag": "AI & Agent 简讯 · 2026.05.22",
-      "title": {
-        "pre": "今日",
-        "big2": "值得关注的",
-        "highlight": "三件事"
-      },
-      "subtitle": "Karpathy 确认加入 Anthropic 预训练团队 · Jack Clark 预测 12 个月内有 AI 辅助诺贝尔奖\nSpotify 联手 UMG 推 AI 混音 · 艺术家可收版权费",
-      "footer": "3分钟了解今天 · 每日简讯"
-    },
-    "p2": {
-      "tag": "今日要闻",
-      "title": "<span class=\"hl\">三条动态</span> 值得关注",
-      "type": "news-list",
-      "items": [
-        { "title": "Karpathy 加入 Anthropic 预训练团队", "desc": "OpenAI 联合创始人 Andrej Karpathy 正式宣布加入 Anthropic，负责用 Claude 加速预训练研究。此举被视为 Anthropic 对抗 OpenAI 在人才争夺战中最重要的一步。" },
-        { "title": "Jack Clark 预测：AI 辅助诺贝尔奖 12 个月内", "desc": "Anthropic 联合创始人 Jack Clark 在牛津演讲时预言：AI 将在一年内辅助人类获得诺贝尔级发现；同时承认 AI 存在「非零概率」的灭绝风险。" },
-        { "title": "Spotify + UMG 推 AI 混音，艺术家获版权分成", "desc": "Spotify 与环球音乐达成 AI 混音合作，Premium 用户可付费生成 AI 翻唱/混音，参与艺术家获得版权分成。这是主流音乐平台首个深度 AI 内容合作。" }
-      ]
-    },
-    "p3": {
-      "tag": "行业观察",
-      "title": "<span class=\"hl\">我的看法</span>",
-      "type": "body-list",
-      "items": [
-        { "label": "人才流向", "text": "Karpathy 从 OpenAI → Tesla → 再到 Anthropic，这个路径本身就是行业风向标。最懂预训练的人选择了 Claude 生态，说明 Anthropic 在基础模型上的投入被顶级人才认可。" },
-        { "label": "AI 与创造力", "text": "Spotify + UMG 的合作模式可能是 AI 时代内容版权的模板——不抵制、不封禁，而是让艺术家选择参与并获得分成。比起诉讼，这个方向更可持续。" }
-      ],
-      "closing": "AI 人才战争和版权实验，今天都走到了新阶段。"
+      "footer": "开源项目 · MIT · SST 团队"
     }
   }
 }
