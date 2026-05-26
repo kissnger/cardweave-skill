@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 """
-Cardweave 流程初始化 — setup.py
+Cardweave 流程初始化 — step0_setup.py
 
 删除旧的 template.json，生成新的空模板，日期锁定为当天。
-之后 curate.py 会沿用这个日期，不会被数据日期覆盖。
+之后 step2_curate.py 会沿用这个日期，不会被数据日期覆盖。
 
 用法：
   cd cardweave-skill/
-  python3 scripts/setup.py
-  python3 scripts/search_all.py
-  python3 scripts/curate.py --date YYYY-MM-DD   # 沿用 setup 的日期
-  python3 scripts/editorial.py
-  python3 scripts/generate.py
+  python3 scripts/step0_setup.py
+  python3 scripts/step1_search.py
+  python3 scripts/step2_curate.py
+  python3 scripts/step4_generate.py [--screenshot]
 """
 import json
 from pathlib import Path

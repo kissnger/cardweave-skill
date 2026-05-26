@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """
-Cardweave 每日卡片海报生成器 — step4_generate.py
+卡 — step4_generate.py
 
 用法：
   cd cardweave-skill/
-  python3 scripts/step4_generate.py                              # 生成 HTML
-  python3 scripts/step4_generate.py [data.json]                  # 用指定数据源
-  python3 scripts/step4_generate.py -o /path/to/output           # 输出到指定目录
-  python3 scripts/step4_generate.py --screenshot                 # + PNG 截图
+  python3 pipeline/step4_generate.py -o ./output                 # 生成 HTML 到 ../output/{date}/
+  python3 scripts/step4_generate.py [data.json] -o ../output     # 用指定数据源
+  python3 pipeline/step4_generate.py -o ./output --screenshot    # 生成 HTML + PNG 截图
 
-参数：
-  data.json          可选，数据源路径。省略则用 templates/template.json
-  -o, --output-dir   输出目录。省略则在 skill 根目录下按日期新建文件夹
+必选参数：
+  -o, --output-dir   输出基目录。产物放在 {output_dir}/{日期}/ 下
+
+可选参数：
+  data.json          数据源路径。省略则用 templates/template.json
   --screenshot       生成后自动截图（需 Playwright + Chromium）
 """
 import json, os, sys, re
@@ -39,6 +40,11 @@ while i < len(sys.argv):
 
 DATA_FILE = data_path or (ROOT / "templates" / "template.json")
 flags = ["--screenshot"] if screenshot else []
+
+if output_dir is None:
+    print("[错误] 必须指定输出目录: -o / --output-dir", file=sys.stderr)
+    print("  用法: python3 pipeline/step4_generate.py -o ./output", file=sys.stderr)
+    sys.exit(1)
 
 if not DATA_FILE.exists():
     print(f"[错误] 找不到数据源文件: {DATA_FILE}", file=sys.stderr)
@@ -70,9 +76,8 @@ if not date_str or date_str == "unknown":
     date_str = datetime.now().strftime("%Y-%m-%d")
     print(f"[提示] 数据源未设置日期，使用今日: {date_str}")
 
-OUT_DIR = (output_dir / date_str) if output_dir else (ROOT / date_str)
-if output_dir:
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+OUT_DIR = output_dir / date_str
+OUT_DIR.mkdir(parents=True, exist_ok=True)
 for slug in ("trend", "tool", "brief"):
     (OUT_DIR / slug).mkdir(parents=True, exist_ok=True)
 

@@ -1,5 +1,4 @@
-# Generated output (date directories)
-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
-*.png
+# Generated output
+output/
 __pycache__/
 .DS_Store

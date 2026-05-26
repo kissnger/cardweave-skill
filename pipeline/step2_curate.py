@@ -2,7 +2,7 @@
 """
 Cardweave 内容出库 — step2_curate.py
 
-读取 cardweave_db.json（扁平条目数组）+ rules/curation.yaml，
+读取 cardweave_db.json（扁平条目数组）+ config/curation.yaml，
 按策展规则输出选题.json。
 
 用法：
@@ -57,14 +57,25 @@ def fetch_page_text(url, timeout=5):
         return None
 
 
-def get_entries(db, date_str=None, category=None, is_new_only=False):
-    """从扁平的 db.entries 数组中筛选条目"""
+def get_entries(db, date_str=None, category=None, is_new_only=False, days_range=2):
+    """从扁平的 db.entries 数组中筛选条目
+    days_range: 从 date_str 向前多少天都命中（默认2天，含当天）
+    """
     entries = db.get("entries", [])
     result = []
 
+    from datetime import datetime, timedelta
+    end = datetime.strptime(date_str, "%Y-%m-%d") if date_str else datetime.now()
+    start = end - timedelta(days=days_range - 1)
+
     for e in entries:
-        if date_str and e.get("created_at", "")[:10] != date_str:
-            continue
+        if date_str:
+            d = e.get("created_at", "")[:10]
+            if not d:
+                continue
+            ed = datetime.strptime(d, "%Y-%m-%d")
+            if ed < start or ed > end:
+                continue
         if category and e.get("category") != category:
             continue
         if is_new_only and not e.get("isNew", False):
@@ -251,11 +262,24 @@ def pick_series(series_name, rules, db, date_str):
         if sid not in seen or c.get("points", 0) > seen[sid].get("points", 0):
             seen[sid] = c
     all_candidates = list(seen.values())
-    sort_by = r.get("cover", {}).get("select", {}).get("sort_by", "points")
-    all_candidates.sort(key=lambda x: (x.get("isNew", False), x.get("points", 0)), reverse=True)
+
+    # 按 cover 规则排序：priority_tags 优先于 points
+    cover_select = r.get("cover", {}).get("select", {})
+    priority_tags = cover_select.get("priority_tags", [])
+    sort_by = cover_select.get("sort_by", "points")
+
+    def sort_key(x):
+        tag_boost = 0
+        for i, pt in enumerate(priority_tags):
+            if pt in x.get("_tags", []):
+                tag_boost = (len(priority_tags) - i) * 10000
+                break
+        return (x.get("isNew", False), tag_boost + x.get("points", 0))
+
+    all_candidates.sort(key=sort_key, reverse=True)
 
     # 按 cover 规则取候选
-    select_r = r.get("cover", {}).get("select", {})
+    select_r = cover_select
     max_n = select_r.get("max_candidates", 3)
     min_pts = select_r.get("min_points", 0)
     picked = [c for c in all_candidates if c.get("points", 0) >= min_pts and not c.get("used", False)][:max_n]

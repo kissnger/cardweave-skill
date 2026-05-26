@@ -2,7 +2,7 @@
 """
 Cardweave 搜索入库 — step1_search.py
 
-读取 rules/curation.yaml 的 search.sources 配置，
+读取 config/curation.yaml 的 search.sources 配置，
 依次执行所有搜索，结果以扁平数组存入 cardweave_db.json。
 
 用法：

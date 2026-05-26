@@ -14,9 +14,9 @@ cd cardweave-skill/
 ## 一键运行
 
 ```bash
-python3 scripts/step1_search.py     # 搜索 → 入库
-python3 scripts/step2_curate.py     # 出选题
-python3 scripts/step4_generate.py   # 生成 9 页 HTML
+python3 pipeline/step1_search.py     # 搜索 → 入库
+python3 pipeline/step2_curate.py     # 出选题
+python3 pipeline/step4_generate.py -o ./output   # 生成 9 页 HTML
 ```
 
 打开 `{日期}/trend/cover.html` 看效果。
@@ -28,7 +28,7 @@ python3 scripts/step4_generate.py   # 生成 9 页 HTML
 ```bash
 npm install -g playwright
 npx playwright install chromium
-python3 scripts/step4_generate.py --screenshot
+python3 pipeline/step4_generate.py -o ./output --screenshot
 ```
 
 截图输出到 `{日期}/screenshots/`。
@@ -37,10 +37,11 @@ python3 scripts/step4_generate.py --screenshot
 
 ```
 assets/base.html        # CSS 母版（颜色变量体系）
-scripts/                # pipeline 脚本
+pipeline/              # 管道脚本（按序号执行）
 templates/template.json # 数据源（pipeline 目标文件）
+lib/                    # 共享模块（hn_search + screenshot）
 references/             # 字段文档 + 流程图
-rules/curation.yaml     # 策展规则（搜索源 · 筛选 · 布局）
+config/curation.yaml    # 策展规则（搜索源 · 筛选 · 布局）
 ```
 
 完整文档见 [SKILL.md](SKILL.md)（给 AI Agent 读的详细操作手册）。
