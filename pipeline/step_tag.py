@@ -2,17 +2,14 @@
 """
 Cardweave 标签生成 — step_tag.py
 
-读取 选题.json（curate.py 产出），为每个系列封面生成话题标签。
+读取 working/01_selection.json（curate.py 产出），为每个系列封面生成话题标签。
 标签格式：「前缀 · 后缀」，前缀来自 curation.yaml 的 layout.tag，
 后缀根据选中条目的标题自动生成有意义的简短话题词。
 
 用法：
   cd cardweave-skill/
-  python3 scripts/step_tag.py                       # 生成标签，写入 tags.json
-  python3 scripts/step_tag.py --update-template     # 直接更新 template.json 的 tag 字段
-
-输出：
-  {date}/tags.json — 每个系列的 tag 字段
+  python3 pipeline/step_tag.py -o ../output                     # 生成标签到 working/01_tags.json
+  python3 pipeline/step_tag.py -o ../output --update-template   # 同时更新 template.json 的 tag 字段
 """
 import json, sys, re
 from pathlib import Path
@@ -20,7 +17,9 @@ from datetime import datetime
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-RULES_FILE = ROOT / "rules" / "curation.yaml"
+sys.path.insert(0, str(HERE))
+from config import get_output_dir
+RULES_FILE = ROOT / "config" / "curation.yaml"
 
 
 # ── 话题词提取规则 ──────────────────────────────────────
@@ -141,20 +140,48 @@ def generate_tags(date_str, topic_data, config_series):
 
 def main():
     update_template = '--update-template' in sys.argv
+    output_dir = None
 
-    # 确定日期（从选题.json 的日期目录或当前日期）
+    i = 1
+    while i < len(sys.argv):
+        a = sys.argv[i]
+        if a in ("--output-dir", "-o") and i + 1 < len(sys.argv):
+            output_dir = Path(sys.argv[i + 1])
+            i += 1
+        i += 1
+
+if output_dir is None:
+    output_dir = get_output_dir()
+    print(f"[config] 未指定 -o，从 rules 文件读取 output.base_dir → {output_dir}")
+        sys.exit(1)
+
+    # 安全门禁
+    OUT_RESOLVED = output_dir.resolve()
+    if OUT_RESOLVED == ROOT.resolve() or ROOT.resolve() in OUT_RESOLVED.parents:
+        print(f"[错误] 输出路径 {output_dir} 在技能目录树内！", file=sys.stderr)
+        print(f"  技能根目录: {ROOT}", file=sys.stderr)
+        print(f"  请指定 -o 到技能目录之外", file=sys.stderr)
+        sys.exit(1)
+
+    # 确定日期（从 selection.json 或当前日期）
     date_str = datetime.now().strftime('%Y-%m-%d')
 
-    # 查找最新的选题.json
+    # 查找最新的 selection.json
     topic_file = None
-    candidates = sorted(ROOT.glob('*/选题.json'), reverse=True)
-    if candidates:
-        topic_file = candidates[0]
-        # 从路径提取日期
-        date_str = topic_file.parent.name
+    candidates = sorted(output_dir.glob('*/tmp/01_selection.json'), reverse=True)
+    for c in candidates:
+        try:
+            with open(c) as f:
+                data = json.load(f)
+            if data.get('date'):
+                date_str = data['date']
+                topic_file = c
+                break
+        except (json.JSONDecodeError, KeyError, IOError):
+            continue
 
     if not topic_file or not topic_file.exists():
-        print(f'[错误] 未找到 选题.json，先跑 curate.py', file=sys.stderr)
+        print(f'[错误] 未找到 tmp/01_selection.json，先跑 curate.py -o {output_dir}', file=sys.stderr)
         sys.exit(1)
 
     with open(topic_file) as f:
@@ -180,10 +207,10 @@ def main():
 
     tags = generate_tags(date_str, topic_data, config_series)
 
-    # 输出
-    out_dir = ROOT / date_str
+    # 写入 tmp/01_tags.json
+    out_dir = output_dir / date_str / "tmp"
     out_dir.mkdir(parents=True, exist_ok=True)
-    tags_file = out_dir / 'tags.json'
+    tags_file = out_dir / '01_tags.json'
 
     output = {
         'date': date_str,
@@ -192,7 +219,7 @@ def main():
     with open(tags_file, 'w', encoding='utf-8') as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print(f'📄 tags.json → {tags_file.relative_to(ROOT)}')
+    print(f'📄 01_tags.json → {tags_file}')
     print()
     for s in ['brief', 'trend', 'tool']:
         tag = tags.get(s)
@@ -213,14 +240,16 @@ def main():
                 tmpl = json.load(f)
             for s in ['brief', 'trend', 'tool']:
                 if s in tmpl and s in tags and tags[s]:
+                    if 'cover' not in tmpl[s]:
+                        tmpl[s]['cover'] = {}
                     tmpl[s]['cover']['tag'] = tags[s]
             with open(tmpl_file, 'w', encoding='utf-8') as f:
                 json.dump(tmpl, f, ensure_ascii=False, indent=2)
             print('✅ 已更新 template.json 的 tag 字段')
 
     print()
-    print('下一步: 用这些 tag 或 --update-template 直接写入 template.json')
-    print(f'       python3 scripts/step_tag.py --update-template')
+    print(f'下一步: 读取 tmp/01_selection.json 获取正文 → 写中文')
+    print(f'        然后 python3 pipeline/step4_generate.py -o ../output')
 
 
 if __name__ == '__main__':

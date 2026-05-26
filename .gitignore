@@ -2,3 +2,6 @@
 # Use generate.py -o ../output to output externally.
 __pycache__/
 .DS_Store
+cardweave_db.json
+templates/template.json
+output/

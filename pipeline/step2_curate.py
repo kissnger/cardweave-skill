@@ -7,8 +7,9 @@ Cardweave 内容出库 — step2_curate.py
 
 用法：
   cd cardweave-skill/
-  python3 scripts/step2_curate.py                       # 读 template.json 的日期
-  python3 scripts/step2_curate.py --review              # 只看候选，不写入
+  python3 pipeline/step2_curate.py                       # 输出到 config 默认路径
+  python3 pipeline/step2_curate.py -o ../output          # 覆盖输出路径
+  python3 pipeline/step2_curate.py --review              # 只看候选，不写入
 """
 import json, sys
 from urllib.request import urlopen, Request
@@ -19,28 +20,35 @@ from datetime import datetime
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-RULES_FILE = ROOT / "rules" / "curation.yaml"
+sys.path.insert(0, str(HERE))
+from config import get_output_dir
+
+RULES_FILE = ROOT / "config" / "curation.yaml"
 DB_FILE = ROOT / "cardweave_db.json"
 TEMPLATE_FILE = ROOT / "templates" / "template.json"
 
 today = datetime.now().strftime("%Y-%m-%d")
+
 
 def load_rules():
     import yaml
     with open(RULES_FILE) as f:
         return yaml.safe_load(f)
 
+
 def load_db():
     if not DB_FILE.exists():
         print(f"[错误] cardweave_db.json 不存在", file=sys.stderr)
-        print(f"  先跑: python3 scripts/step1_search.py", file=sys.stderr)
+        print(f"  先跑: python3 pipeline/step1_search.py", file=sys.stderr)
         sys.exit(1)
     with open(DB_FILE) as f:
         return json.load(f)
 
+
 def save_db(db):
     with open(DB_FILE, "w", encoding="utf-8") as f:
         json.dump(db, f, ensure_ascii=False, indent=2)
+
 
 def fetch_page_text(url, timeout=5):
     """抓取 URL 页面文本内容"""
@@ -289,10 +297,29 @@ def pick_series(series_name, rules, db, date_str):
 def main():
     args = sys.argv[1:]
     review_only = False
+    output_dir = None
 
-    for a in args:
+    i = 1
+    while i < len(sys.argv):
+        a = sys.argv[i]
         if a == "--review":
             review_only = True
+        elif a in ("--output-dir", "-o") and i + 1 < len(sys.argv):
+            output_dir = Path(sys.argv[i + 1])
+            i += 1
+        i += 1
+
+    if output_dir is None:
+        output_dir = get_output_dir()
+        print(f"[config] 未指定 -o，从 rules 文件读取 output.base_dir → {output_dir}")
+
+    # 安全门禁：禁止输出到技能目录树内
+    OUT_RESOLVED = output_dir.resolve()
+    if OUT_RESOLVED == ROOT.resolve() or ROOT.resolve() in OUT_RESOLVED.parents:
+        print(f"[错误] 输出路径 {output_dir} 在技能目录树内！", file=sys.stderr)
+        print(f"  技能根目录: {ROOT}", file=sys.stderr)
+        print(f"  请指定 -o 到技能目录之外", file=sys.stderr)
+        sys.exit(1)
 
     rules = load_rules()
     db = load_db()
@@ -336,13 +363,14 @@ def main():
                 print(f"  ↑{i['points']:4d}  {i['title'][:60]}")
         return
 
-    # 写出选题 json
-    out_dir = ROOT / date_str
-    out_dir.mkdir(parents=True, exist_ok=True)
-    topic_file = out_dir / "选题.json"
+    # 写出选题 json 到 {output_dir}/{date}/tmp/01_selection.json
+    out_base = output_dir / date_str / "tmp"
+    out_base.mkdir(parents=True, exist_ok=True)
+    topic_file = out_base / "01_selection.json"
     with open(topic_file, "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
-    print(f"  📄 {topic_file.relative_to(ROOT)}")
+    print(f"  📄 {topic_file}")
+    print(f"    选题清单 | brief={len(output['brief'])} trend={len(output['trend'])} tool={len(output['tool'])}")
 
     # 标记已用
     if picked_ids:
@@ -360,8 +388,8 @@ def main():
             print(f"  ✓ {len(set(picked_ids))} 条已标记为 used")
 
     print(f"\n{'='*50}")
-    print(f"  下一步: 获取正文 → 写中文")
-    print(f"          python3 scripts/generate.py")
+    print(f"  下一步: 读取 tmp/01_selection.json 获取正文 → 写中文")
+    print(f"          然后: python3 pipeline/step4_generate.py")
     print(f"{'='*50}\n")
 
 

@@ -14,11 +14,15 @@ Cardweave 搜索入库 — step1_search.py
 import json, sys, os
 from pathlib import Path
 from datetime import datetime
+
+# ── 添加 lib/ 到模块搜索路径 ──────────────────────────────
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE / ".." / "lib"))
+
 from hn_search import fetch
 
-HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-RULES_FILE = ROOT / "rules" / "curation.yaml"
+RULES_FILE = ROOT / "config" / "curation.yaml"
 DB_FILE = ROOT / "cardweave_db.json"
 
 today = datetime.now().strftime("%Y-%m-%d")

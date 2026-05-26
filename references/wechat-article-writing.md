@@ -1,14 +1,14 @@
 # 公众号文章写作指南
 
-基于 Step 2b 生成的完整中文 .md 文件，为每个分类写一篇公众号长文。
+基于 tmp/02_drafts/ 下的中文参考，为每个分类写一篇公众号长文。
 
 ```python
 for 系列 in [brief, trend, tool]:
-    md = read(f"{日期}/{系列}_01.md")  # 完整翻译好的中文参考
-    # 3a. 写公众号文章
+    md = read(f"tmp/02_drafts/{系列}_01.md")  # 完整翻译好的中文参考
+    # 写公众号文章
     article = compose_article(md)       # 1500-2500 字
-    save(f"{日期}/{系列}_article.html")
-    # 3b. 填 template.json（海报中文文案）
+    save(f"articles/{seq}_{系列}.html")
+    # 填 template.json（海报中文文案）
     fill_template(系列, md)
 ```
 
