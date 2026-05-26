@@ -16,7 +16,7 @@ cd cardweave-skill/
 ```bash
 python3 pipeline/step1_search.py     # 搜索 → 入库
 python3 pipeline/step2_curate.py     # 出选题
-python3 pipeline/step4_generate.py -o ./output   # 生成 9 页 HTML
+python3 pipeline/step4_generate.py -o ../output   # 生成 9 页 HTML 到 ../output/{date}/
 ```
 
 打开 `{日期}/trend/cover.html` 看效果。
@@ -28,7 +28,7 @@ python3 pipeline/step4_generate.py -o ./output   # 生成 9 页 HTML
 ```bash
 npm install -g playwright
 npx playwright install chromium
-python3 pipeline/step4_generate.py -o ./output --screenshot
+python3 pipeline/step4_generate.py -o ../output --screenshot
 ```
 
 截图输出到 `{日期}/screenshots/`。

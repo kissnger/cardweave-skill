@@ -8,7 +8,7 @@
 | 1 | step1_search.py | config/curation.yaml | 4源OR合并, story_id去重, 48h窗口 | cardweave_db.json |
 | 2 | step2_curate.py | DB + config/curation.yaml + template._meta.date | min_points + max_candidates分系列；跨源去重 | output/{date}/选题.json |
 | 3 | Agent手动 | 选题.json | 正文≤500字；中文标题/描述/金句 | 正文.md + template.json(中文) + 3篇公众号文章 |
-| 4 | step4_generate.py -o ./output | template.json + base.html | 递归检查"待填"门禁；-o 必选 | output/{_meta.date}/ 9页HTML |
+| 4 | step4_generate.py -o ../output | template.json + base.html | 递归检查"待填"门禁；-o 必选 + 技能树外检测 | ../output/{_meta.date}/ 9页HTML |
 | 5 | generate.py --screenshot / Playwright | 9页HTML | 540×960@2x | 9张PNG |
 | 5b | Agent手动patch | 3篇公众号文章 | img src从HTML改为实际PNG路径 | 文章图片可正常显示 |
 

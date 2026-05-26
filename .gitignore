@@ -1,4 +1,4 @@
-# Generated output
-output/
+# No generated output inside skill tree.
+# Use generate.py -o ../output to output externally.
 __pycache__/
 .DS_Store

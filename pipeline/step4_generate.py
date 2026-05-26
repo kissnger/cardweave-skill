@@ -2,14 +2,14 @@
 """
 卡 — step4_generate.py
 
-用法：
-  cd cardweave-skill/
-  python3 pipeline/step4_generate.py -o ./output                 # 生成 HTML 到 ../output/{date}/
-  python3 scripts/step4_generate.py [data.json] -o ../output     # 用指定数据源
-  python3 pipeline/step4_generate.py -o ./output --screenshot    # 生成 HTML + PNG 截图
-
-必选参数：
-  -o, --output-dir   输出基目录。产物放在 {output_dir}/{日期}/ 下
+|用法：
+|  cd cardweave-skill/
+|  python3 pipeline/step4_generate.py -o ../output                 # 生成 HTML 到 ../output/{date}/
+|  python3 pipeline/step4_generate.py [data.json] -o ../output     # 用指定数据源
+|  python3 pipeline/step4_generate.py -o ../output --screenshot    # 生成 HTML + PNG 截图
+|
+|必选参数：
+|  -o, --output-dir   输出基目录（必须在技能目录树外）。产物放在 {output_dir}/{日期}/ 下
 
 可选参数：
   data.json          数据源路径。省略则用 templates/template.json
@@ -43,7 +43,16 @@ flags = ["--screenshot"] if screenshot else []
 
 if output_dir is None:
     print("[错误] 必须指定输出目录: -o / --output-dir", file=sys.stderr)
-    print("  用法: python3 pipeline/step4_generate.py -o ./output", file=sys.stderr)
+    print("  用法: python3 pipeline/step4_generate.py -o ../output", file=sys.stderr)
+    sys.exit(1)
+
+# ── 安全门禁：禁止输出到技能目录树内 ────────────────────
+OUT_RESOLVED = output_dir.resolve()
+if OUT_RESOLVED == ROOT.resolve() or ROOT.resolve() in OUT_RESOLVED.parents:
+    print(f"[错误] 输出路径 {output_dir} 在技能目录树内！", file=sys.stderr)
+    print(f"  技能根目录: {ROOT}", file=sys.stderr)
+    print(f"  请指定 -o 到技能目录之外，例如:", file=sys.stderr)
+    print(f"    python3 pipeline/step4_generate.py -o ../output", file=sys.stderr)
     sys.exit(1)
 
 if not DATA_FILE.exists():
