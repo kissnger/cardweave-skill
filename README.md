@@ -14,12 +14,14 @@ cd cardweave-skill/
 ## 一键运行
 
 ```bash
-python3 pipeline/step1_search.py     # 搜索 → 入库
-python3 pipeline/step2_curate.py     # 出选题
-python3 pipeline/step4_generate.py -o ../output   # 生成 9 页 HTML 到 ../output/{date}/
+python3 pipeline/step1_search.py          # 搜索 → 入库
+python3 pipeline/step2_curate.py          # 出选题（输出路径从 config 读取）
+python3 pipeline/step_tag.py              # 生成标签
+python3 pipeline/step4_generate.py        # 生成 9 页 HTML 海报
 ```
 
-打开 `{日期}/trend/cover.html` 看效果。
+输出路径默认由 `config/curation.yaml` 的 `output.base_dir` 控制（`../output` → `~/.hermes/skills/creative/output/{date}/`）。
+也支持 `-o <路径>` 覆盖。
 
 ## 可选：PNG 截图
 
@@ -28,20 +30,39 @@ python3 pipeline/step4_generate.py -o ../output   # 生成 9 页 HTML 到 ../out
 ```bash
 npm install -g playwright
 npx playwright install chromium
-python3 pipeline/step4_generate.py -o ../output --screenshot
+python3 pipeline/step4_generate.py --screenshot
 ```
 
-截图输出到 `{日期}/screenshots/`。
+截图输出到 `{output_base}/{date}/screenshots/`。
+
+## 输出结构
+
+```
+{output_base}/{date}/
+├── articles/           ← 3 篇公众号文章
+├── screenshots/        ← 9 张 PNG 截图（--screenshot）
+└── tmp/
+    ├── 01_selection.json   ← 选题清单
+    ├── 01_tags.json        ← 话题标签
+    ├── 02_drafts/          ← 正文草稿
+    └── cards/              ← 9 页 HTML 海报
+```
 
 ## 项目结构
 
 ```
 assets/base.html        # CSS 母版（颜色变量体系）
-pipeline/              # 管道脚本（按序号执行）
-templates/template.json # 数据源（pipeline 目标文件）
-lib/                    # 共享模块（hn_search + screenshot）
+pipeline/               # 管道脚本（按序号执行）
+  ├── config.py         # 统一输出路径读取器
+  ├── step0_setup.py    # 初始化 template.json
+  ├── step1_search.py   # HN 搜索入库
+  ├── step2_curate.py   # 策展出选题
+  ├── step_tag.py       # 生成话题标签
+  └── step4_generate.py # 生成海报 + 截图
+lib/                    # 共享模块
 references/             # 字段文档 + 流程图
-config/curation.yaml    # 策展规则（搜索源 · 筛选 · 布局）
+config/curation.yaml    # 唯一配置源（搜索 · 策展 · 输出路径）
+templates/template.json # 数据源（运行时生成，不追踪 git）
 ```
 
 完整文档见 [SKILL.md](SKILL.md)（给 AI Agent 读的详细操作手册）。
